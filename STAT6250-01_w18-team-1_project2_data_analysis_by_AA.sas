@@ -28,7 +28,7 @@ X "cd ""%substr(%sysget(SAS_EXECFILEPATH),1,%eval(%length(%sysget(SAS_EXECFILEPA
 *******************************************************************************;
 
 title1
-'Research Question: What is the distribution of enrollment in terms of gender? How is the trend in enrollment in terms of gender? 
+'Research Question: What is the distribution of enrollment in terms of gender? How is the trend in enrollment in terms of gender?'
 ;
 
 title2
@@ -36,43 +36,104 @@ title2
 ;
 
 footnote1
-"Of the five schools with the greatest increases in percent eligible for free/reduced-price meals between AY2014-15 and AY2015-16, the increase in percent eligible ranges from about 41% to about 55%."
+"In AY1999-2000, there were 7,010 enrollments for male students and 5950 enrollments for female students"
 ;
 
 footnote2
-"Given the magnitude of these changes, further investigation should be performed to ensure no data errors are involved."
+"In AY1999-2000, there were 48,557 enrollments for male students and 43,375 enrollments for female students"
 ;
 
 footnote3
-"However, assuming there are no data issues underlying this analysis, possible explanations for such large increases include changing CA demographics and recent loosening of the rules under which students qualify for free/reduced-price meals."
+"There has been a significant increase in the number of female enrollements in a decade."
 ;
 
 *
 Note: This compares the column "Gender" from enr99
 to the column of the same name from enr09.
-Methodology: When combining frpm1415 with frpm1516 during data preparation,
-take the difference of values of "Percent (%) Eligible Free (K-12)" for each
-school and create a new variable called frpm_rate_change_2014_to_2015. Then,
-use proc sort to create a temporary sorted table in descending by
-frpm_rate_change_2014_to_2015. Finally, use proc print here to display the
-first five rows of the sorted dataset.
-Limitations: This methodology does not account for schools with missing data,
-nor does it attempt to validate data in any way, like filtering for percentages
-between 0 and 1.
-Followup Steps: More carefully clean values in order to filter out any possible
-illegal values, and better handle missing data, e.g., by using a previous year's
-data or a rolling average of previous years' data as a proxy.
+Methodology: We print the data from enr99 and enr09 using where clause with 
+gender=M and gender=F.
+Followup Steps: We need to consider the population of males and females for 
+better assessment
 ;
 
+proc sort
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_first_M
+    ;
+	where
+	    YEAR=9900 and GENDER = 'M'
+	;
+	by
+        descending ENR_TOTAL
+    ;
+run;
+
+proc sort
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_first_F
+    ;
+	where
+	    YEAR=9900 and GENDER = 'F'
+	;
+	by
+        descending ENR_TOTAL
+    ;
+run;
+
+proc sort
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_sec_M
+    ;
+	where
+	    YEAR=910 and GENDER = 'M'
+	;
+	by
+        descending ENR_TOTAL
+    ;
+run;
+
+proc sort
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_sec_F
+    ;
+	where
+	    YEAR=910 and GENDER = 'F'
+	;
+	by
+        descending ENR_TOTAL
+    ;
+run;
+
 proc print
-        data=cde_2014_analytic_file_sort_frpm(obs=5)
-    ;
-    id
-        School_Name
-    ;
-    var
-        frpm_rate_change_2014_to_2015
-    ;
+    data=enr_analytic_file_sort_first_M(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER ENR_TOTAL 
+	;
+run;
+
+proc print
+    data=enr_analytic_file_sort_sec_M(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER ENR_TOTAL 
+	;
+run;
+
+proc print
+    data=enr_analytic_file_sort_first_F(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER ENR_TOTAL 
+	;
+run;
+
+proc print
+    data=enr_analytic_file_sort_sec_F(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER ENR_TOTAL 
+	;
 run;
 
 title;
@@ -92,47 +153,65 @@ title2
 ;
 
 footnote1
-"As can be seen, there was an extremely high correlation between student poverty and SAT scores in AY2014-15, with lower-poverty schools much more likely to have high proportions of students with combined SAT scores exceeding 1500."
+"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: White/Not Hispanic, American Indian/Alaska Native, Hispanic/Latin."
 ;
 
 footnote2
-"Possible explanations for this correlation include child-poverty rates tending to be higher at schools with lower overall academic performance and quality of instruction. In addition, students in non-poverish conditions are more likely to have parents able to pay for SAT preparation."
+"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: Hispanic/Latin, African American/Not Hispanic, White/ Not Hispanic."
 ;
 
 footnote3
-"Given this apparent correlation based on descriptive methodology, further investigation should be performed using inferential methodology to determine the level of statistical significance of the result."
+"There has been a significant increase in enrollment in a decade for white ethnicity, also enrollment decreased for Hispanic/Latin."
 ;
 
 *
-Note: This compares the column "Percent (%) Eligible Free (K-12)" from frpm1415
-to the column PCTGE1500 from sat15.
-Methodology: Use proc means to compute 5-number summaries of "Percent (%)
-Eligible Free (K-12)" and PCTGE1500. Then use proc format to create formats
-that bin both columns with respect to the proc means output. Then use proc freq
-to create a cross-tab of the two variables with respect to the created formats.
-Limitations: Even though predictive modeling is specified in the research
-questions, this methodology solely relies on a crude descriptive technique
-by looking at correlations along quartile values, which could be too coarse a
-method to find actual association between the variables.
-Followup Steps: A possible follow-up to this approach could use an inferential
-statistical technique like linear regression.
+Note: This compares the column "ETHNIC" from enr99
+to the column of the same name from enr09.
+Methodology: We print the data for the top 5 observations with the least 
+number of enrollments. 
+Followup Steps: We need to consider the population of various ethnicities 
+better assessment
 ;
 
-proc freq
-        data=cde_2014_analytic_file
+proc sort
+    data=enr_dropout_analytic_file
+        out=enr_drp_analytic_file_sort_first
     ;
-    table
-             Percent_Eligible_FRPM_K12
-            *PCTGE1500
-            / missing norow nocol nopercent
+	where
+	    YEAR=9900
+	;
+	by
+        ENR_TOTAL
     ;
-        where
-            not(missing(PCTGE1500))
+run;
+
+proc sort
+    data=enr_dropout_analytic_file
+        out=enr_drp_analytic_file_sort_sec
     ;
-    format
-        Percent_Eligible_FRPM_K12 Percent_Eligible_FRPM_K12_bins.
-        PCTGE1500 PCTGE1500_bins.
+	where
+	    YEAR=910
+	;
+	
+    by
+        ENR_TOTAL
     ;
+run;
+
+proc print
+    data=enr_drp_analytic_file_sort_first(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE ETHNIC ENR_TOTAL
+    ; 
+run;
+
+proc print
+    data=enr_drp_analytic_file_sort_sec(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE ETHNIC ENR_TOTAL 
+	;
 run;
 
 title;
@@ -152,43 +231,104 @@ title2
 ;
 
 footnote1
-"All ten schools listed appear to have extremely large numbers of 12th-graders graduating who have completed the SAT but not the coursework needed to apply for the UC/CSU system"
+"In AY1999-2000, there is not much difference between the dropouts between males and female students"
 ;
 
 footnote2
-"Given the magnitude of these numbers, further investigation should be performed to ensure no data errors are involved."
+"In AY2009-2010, the gap of the number of dropouts between males and females increases significantly, with males having higher dropouts"
 ;
 
 footnote3
-"However, assuming there are no data issues underlying this analysis, possible explanations for such large numbers of 12th-graders completing only the SAT include lack of access to UC/CSU-preparatory coursework, as well as lack of proper counseling for students early enough in high school to complete all necessary coursework."
+"We need to further analyze the reasons for increase in dropouts of male students"
 ;
 
 *
-Note: This compares the column NUMTSTTAKR from sat15 to the column TOTAL from
-gradaf15.
-Methodology: When combining sat15 and gradaf15 during data preparation, take
-the difference between NUMTSTTAKR in sat15 and TOTAL in gradaf15 for each
-school and create a new variable called excess_sat_takers. Then, use proc sort
-to create a temporary sorted table in descending by excess_sat_takers. Finally,
-use proc print here to display the first 10 rows of the sorted dataset.
-Limitations: This methodology does not account for schools with missing data,
-nor does it attempt to validate data in any way, like filtering for values
-outside of admissable values.
-Followup Steps: More carefully clean the values of variables so that the
-statistics computed do not include any possible illegal values, and better
-handle missing data, e.g., by using a previous year's data or a rolling average
-of previous years' data as a proxy.
+Note: This compares the column "Gender" from droppouts00
+to the column of the same name from droppouts10.
+Methodology: We print the data from droppouts00 and droppouts10 using 
+where clause with gender=M and gender=F.
+Followup Steps: We need to consider the population of males and females for 
+better assessment
 ;
 
+proc sort
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_first_M
+    ;
+	where
+	    YEAR=9900 and GENDER = 'M'
+	;
+	by
+        descending DTOT
+    ;
+run;
+
+proc sort
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_first_F
+    ;
+	where
+	    YEAR=9900 and GENDER = 'F'
+	;
+	by
+        descending DTOT
+    ;
+run;
+
+proc sort
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_sec_M
+    ;
+	where
+	    YEAR=910 and GENDER = 'M'
+	;
+	by
+        descending DTOT
+    ;
+run;
+
+proc sort
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_sec_F
+    ;
+	where
+	    YEAR=910 and GENDER = 'F'
+	;
+	by
+        descending DTOT
+    ;
+run;
+
 proc print
-        data=cde_2014_analytic_file_sort_sat(obs=10)
-    ;
-    id
-        School_Name
-    ;
-    var
-        excess_sat_takers
-    ;
+    data=drp_analytic_file_sort_first_M(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER DTOT 
+	;
+run;
+
+proc print
+    data=drp_analytic_file_sort_sec_M(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER DTOT 
+	;
+run;
+
+proc print
+    data=drp_analytic_file_sort_first_F(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER DTOT 
+	;
+run;
+
+proc print
+    data=drp_analytic_file_sort_sec_F(obs=5)
+    ; 
+	var
+	    YEAR CDS_CODE GENDER DTOT 
+	;
 run;
 
 title;

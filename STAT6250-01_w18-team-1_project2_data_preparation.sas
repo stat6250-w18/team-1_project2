@@ -282,24 +282,24 @@ data dropout_analytic_file;
     ;
 	retain
 	    YEAR
-        ETHNIC
-		GENDER
-		E7
-		E8
-		E9
-		E10
-		E11
-		E12
-		EUS
-		ETOT
-		D7
-		D8
-		D9
-		D10
-		D11
-		D12
-		DUS
-		DTOT
+            ETHNIC
+	    GENDER
+	    E7
+	    E8
+	    E9
+	    E10
+	    E11
+	    E12
+	    EUS
+	    ETOT
+	    D7
+	    D8
+	    D9
+	    D10
+	    D11
+	    D12
+	    DUS
+	    DTOT
     ;
     by
         CDS_CODE
@@ -323,19 +323,19 @@ corresponding data-analysis files;
 data enr_dropout_analytic_file;
     retain
         CDS_CODE
-		YEAR
+	YEAR
         ETHNIC
         GENDER	
         ENR_TOTAL
-		DTOT
+	DTOT
     ;
     keep
         CDS_CODE
-		YEAR
+	YEAR
         ETHNIC
         GENDER	
         ENR_TOTAL
-		DTOT
+	DTOT
     ;
     merge
         enr_analytic_file
@@ -345,6 +345,3 @@ data enr_dropout_analytic_file;
         CDS_Code
     ;
 run;
-
-
-

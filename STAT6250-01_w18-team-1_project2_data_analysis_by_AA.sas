@@ -168,7 +168,7 @@ footnote3
 Note: This compares the column "ETHNIC" from enr99
 to the column of the same name from enr09.
 Methodology: We print the data for the top 5 observations with the least 
-number of enrollemnts. 
+number of enrollments. 
 Followup Steps: We need to consider the population of various ethnicities 
 better assessment
 ;

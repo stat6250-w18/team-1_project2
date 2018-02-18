@@ -72,14 +72,32 @@ proc format;
         2=" Asian"
         3=" Pacific Islander"
         4=" Filipino"
-		5=" Hispanic/Latin"
-		6=" African American/Not Hispanic"
-		7=" White/ Not Hispanic"
-		8=" Multiple/No Response"
+        5=" Hispanic/Latin"
+        6=" African American/Not Hispanic"
+        7=" White/ Not Hispanic"
+        8=" Multiple/No Response"
     ;
     value $Gender_bins
         'F'=" Female"
         'M'=" Male"
+    ;
+	value $Dropouts_bins
+        'E7'=" Enrollment in grade 7"
+        'E8'=" Enrollment in grade 8"
+        'E9'=" Enrollment in grade 9"
+        'E10'=" Enrollment in grade 10"
+        'E11'=" Enrollment in grade 11"
+        'E12'=" Enrollment in grade 12"
+        'EUS'=" Enrollment in ungraded secondary classes in grades nine through twelve."
+        'ETOT'=" Total enrollment for grades nine through twelve."
+        'D7'=" Dropout in grade 7"
+        'D8'=" Dropout in grade 8"
+        'D9'=" Dropout in grade 9"
+        'D10'=" Dropout in grade 10"
+        'D11'=" Dropout in grade 11"
+        'D12'=" Dropout in grade 12"
+        'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
+        'DTOT'=" Total Dropout for grades nine through twelve."
     ;
 run;
 
@@ -88,25 +106,25 @@ run;
 %let inputDataset1URL =
 https://github.com/stat6250/team-1_project2/blob/master/data/filesenr_1999_2000_edited.xlsx?raw=true
 ;
-%let inputDataset1Type = XLS;
+%let inputDataset1Type = XLSX;
 %let inputDataset1DSN = enr_1999_2000_raw;
 
 %let inputDataset2URL =
 https://github.com/stat6250/team-1_project2/blob/master/data/filesenr_2009_2010_edited.xlsx?raw=true
 ;
-%let inputDataset2Type = XLS;
+%let inputDataset2Type = XLSX;
 %let inputDataset2DSN = enr_2009_2010_raw;
 
 %let inputDataset3URL =
 https://github.com/stat6250/team-1_project2/blob/master/data/filesdropouts_1999_2000_edited.xlsx?raw=true
 ;
-%let inputDataset3Type = XLS;
+%let inputDataset3Type = XLSX;
 %let inputDataset3DSN = dropout_1999_2000_raw;
 
 %let inputDataset4URL =
 https://github.com/stat6250/team-1_project2/blob/master/data/filesdropouts_2009_2010_edited.xlsx?raw=true
 ;
-%let inputDataset4Type = XLS;
+%let inputDataset4Type = XLSX;
 %let inputDataset4DSN = dropout_2009_2010_raw;
 
 
@@ -167,7 +185,7 @@ proc sort
         nodupkey
         data=enr_1999_2000_raw
         dupout=enr_1999_2000_raw_dups
-        out=enr_1999_2000_raw_sorted(where=(not(missing(School_Code))))
+        out=enr_1999_2000_raw_sorted(where=(not(missing(CDS_CODE))))
     ;
     by
         CDS_CODE
@@ -179,7 +197,7 @@ proc sort
         nodupkey
         data=enr_2009_2010_raw
         dupout=enr_2009_2010_raw_dups
-        out=enr_2009_2010_raw_sorted
+        out=enr_2009_2010_raw_sorted(where=(not(missing(CDS_CODE))))
     ;
     by
         CDS_CODE
@@ -191,71 +209,110 @@ proc sort
         nodupkey
         data=dropout_1999_2000_raw
         dupout=dropout_1999_2000_raw_dups
-        out=dropout_1999_2000_raw_sorted
+        out=dropout_1999_2000_raw_sorted(where=(not(missing(CDS_CODE))))
     ;
     by
         CDS_CODE
-		ETHNIC
-		GENDER
+	ETHNIC
+	GENDER
     ;
 run;
 proc sort
         nodupkey
         data=dropout_2009_2010_raw
         dupout=dropout_2009_2010_raw_dups
-        out=dropout_2009_2010_raw_sorted
+        out=dropout_2009_2010_raw_sorted(where=(not(missing(CDS_CODE))))
     ;
     by
         CDS_CODE
-		ETHNIC
-		GENDER
+	ETHNIC
+	GENDER
     ;
 run;
 
-
-* combine FRPM data vertically, combine composite key values into a primary key
-  key, and compute year-over-year change in Percent_Eligible_FRPM_K12,
-  retaining all AY2014-15 fields and y-o-y Percent_Eligible_FRPM_K12 change;
-data frpm1415_raw_with_yoy_change;
-    retain
-        CDS_Code
-    ;
-    length
-        CDS_Code $14.
-    ;
+* combine enr99 and enr09 data vertically;
+data enr_analytic_file;
     set
-        frpm1516_raw_sorted(in=ay2015_data_row)
-        frpm1415_raw_sorted(in=ay2014_data_row)
+        enr_1999_2000_raw_sorted(in=enr_ay1999_data_row)
+        enr_2009_2010_raw_sorted(in=enr_ay2009_data_row)
     ;
-    retain
-        Percent_Eligible_FRPM_K12_1516
+	retain
+	    YEAR
+            ETHNIC
+	    GENDER
+	    KDGN
+	    GR_1
+	    GR_2
+	    GR_3
+	    GR_4
+	    GR_5
+	    GR_6
+	    GR_7
+	    GR_8
+	    UNGR_ELM
+	    GR_9
+	    GR_10
+	    GR_11
+	    GR_12
+	    UNGR_SEC
+	    ENR_TOTAL
+	    ADULT
     ;
     by
-        County_Code
-        District_Code
-        School_Code
+        CDS_CODE
     ;
     if
-        ay2015_data_row=1
+        enr_ay1999_data_row=1
     then
         do;
-            Percent_Eligible_FRPM_K12_1516 = Percent_Eligible_FRPM_K12;
+            data_source = enr_1999_2000_raw_sorted;
         end;
-    else if
-        ay2014_data_row=1
-        and
-        Percent_Eligible_FRPM_K12 > 0
-        and
-        substr(School_Code,1,6) ne "000000"
+    else 
+        do;
+            data_source = enr_2009_2010_raw_sorted;
+        end;
+run;
+
+
+* combine droppouts00 and droppouts10 data vertically;
+data dropout_analytic_file;
+    set
+        dropout_1999_2000_raw_sorted(in=dropout_ay1999_data_row)
+        dropout_2009_2010_raw_sorted(in=dropout_ay2009_data_row)
+    ;
+	retain
+	    YEAR
+        ETHNIC
+		GENDER
+		E7
+		E8
+		E9
+		E10
+		E11
+		E12
+		EUS
+		ETOT
+		D7
+		D8
+		D9
+		D10
+		D11
+		D12
+		DUS
+		DTOT
+    ;
+    by
+        CDS_CODE
+    ;
+    if
+        dropout_ay1999_data_row=1
     then
         do;
-            CDS_Code = cats(County_Code,District_Code,School_Code);
-            frpm_rate_change_2014_to_2015 =
-                Percent_Eligible_FRPM_K12
-                -
-                Percent_Eligible_FRPM_K12_1516
-            ;
-            output;
+            data_source = dropout_1999_2000_raw_sorted;
+        end;
+    else 
+        do;
+            data_source = dropout_2009_2010_raw_sorted;
         end;
 run;
 
@@ -263,67 +320,31 @@ run;
 * build analytic dataset from raw datasets with the least number of columns and
 minimal cleaning/transformation needed to address research questions in
 corresponding data-analysis files;
-data cde_2014_analytic_file;
+data enr_dropout_analytic_file;
     retain
-        CDS_Code
-        School_Name
-        Percent_Eligible_FRPM_K12
-        frpm_rate_change_2014_to_2015
-        PCTGE1500
-        excess_sat_takers
+        CDS_CODE
+		YEAR
+        ETHNIC
+        GENDER	
+        ENR_TOTAL
+		DTOT
     ;
     keep
-        CDS_Code
-        School_Name
-        Percent_Eligible_FRPM_K12
-        frpm_rate_change_2014_to_2015
-        PCTGE1500
-        excess_sat_takers
+        CDS_CODE
+		YEAR
+        ETHNIC
+        GENDER	
+        ENR_TOTAL
+		DTOT
     ;
     merge
-        frpm1415_raw_with_yoy_change
-        gradaf15_raw
-        sat15_raw(rename=(CDS=CDS_Code PCTGE1500=PCTGE1500_character))
+        enr_analytic_file
+        dropout_analytic_file
     ;
     by
         CDS_Code
     ;
-    if
-        not(missing(compress(PCTGE1500_character,'.','kd')))
-    then
-        do;
-            PCTGE1500 = input(PCTGE1500_character,best12.2);
-        end;
-    else
-        do;
-            call missing(PCTGE1500);
-        end;
-    excess_sat_takers = input(NUMTSTTAKR,best12.) - input(TOTAL,best12.);
-    if
-        not(missing(CDS_Code))
-        and
-        not(missing(School_Name))
-        and
-        not(missing(School_Name))
-    ;
 run;
 
 
-* use proc sort to create a temporary sorted table in descending by
-frpm_rate_change_2014_to_2015;
-proc sort
-        data=cde_2014_analytic_file
-        out=cde_2014_analytic_file_sort_frpm
-    ;
-    by descending frpm_rate_change_2014_to_2015;
-run;
 
-
-* use proc sort to create a temporary sorted table in descending by
-excess_sat_takers;
-proc sort
-        data=cde_2014_analytic_file
-        out=cde_2014_analytic_file_sort_sat
-    ;
-    by descending excess_sat_takers;
-run;

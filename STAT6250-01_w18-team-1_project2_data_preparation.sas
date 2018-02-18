@@ -81,6 +81,24 @@ proc format;
         'F'=" Female"
         'M'=" Male"
     ;
+	value $Dropouts_bins
+        'E7'=" Enrollment in grade 7"
+        'E8'=" Enrollment in grade 8"
+		'E9'=" Enrollment in grade 9"
+		'E10'=" Enrollment in grade 10"
+		'E11'=" Enrollment in grade 11"
+		'E12'=" Enrollment in grade 12"
+		'EUS'=" Enrollment in ungraded secondary classes in grades nine through twelve."
+		'ETOT'=" Total enrollment for grades nine through twelve."
+		'D7'=" Dropout in grade 7"
+        'D8'=" Dropout in grade 8"
+		'D9'=" Dropout in grade 9"
+		'D10'=" Dropout in grade 10"
+		'D11'=" Dropout in grade 11"
+		'D12'=" Dropout in grade 12"
+		'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
+		'DTOT'=" Total Dropout for grades nine through twelve."
+    ;
 run;
 
 
@@ -212,16 +230,14 @@ proc sort
     ;
 run;
 
-
-* combine enr99 and enr09 data vertically, combine composite key values into a primary key
-  key, and compute year-over-year change in Percent_Eligible_FRPM_K12,
-  retaining all AY2014-15 fields and y-o-y Percent_Eligible_FRPM_K12 change;
+* combine enr99 and enr09 data vertically;
 data enr_analytic_file;
     set
-        enr_1999_2000_raw_sorted(in=ay1999_data_row)
-        enr_2009_2010_raw_sorted(in=ay2009_data_row)
+        enr_1999_2000_raw_sorted(in=enr_ay1999_data_row)
+        enr_2009_2010_raw_sorted(in=enr_ay2009_data_row)
     ;
 	retain
+	    YEAR
         ETHNIC
 		GENDER
 		KDGN
@@ -246,7 +262,7 @@ data enr_analytic_file;
         CDS_CODE
     ;
     if
-        ay1999_data_row=1
+        enr_ay1999_data_row=1
     then
         do;
             data_source = enr_1999_2000_raw_sorted;
@@ -258,31 +274,16 @@ data enr_analytic_file;
 run;
 
 
-* build analytic dataset from raw datasets with the least number of columns and
-minimal cleaning/transformation needed to address research questions in
-corresponding data-analysis files;
-data enr_dropout_analytic_file;
-    retain
-        CDS_CODE
+* combine droppouts00 and droppouts10 data vertically;
+data dropout_analytic_file;
+    set
+        dropout_1999_2000_raw_sorted(in=dropout_ay1999_data_row)
+        dropout_2009_2010_raw_sorted(in=dropout_ay2009_data_row)
+    ;
+	retain
+	    YEAR
         ETHNIC
-        GENDER	
-        KDGN
-		GR_1
-		GR_2
-		GR_3
-		GR_4
-		GR_5
-		GR_6
-		GR_7
-		GR_8
-		UNGR_ELM
-		GR_9
-		GR_10
-		GR_11
-		GR_12
-		UNGR_SEC
-		ENR_TOTAL
-		ADULT
+		GENDER
 		E7
 		E8
 		E9
@@ -300,42 +301,40 @@ data enr_dropout_analytic_file;
 		DUS
 		DTOT
     ;
-    keep
+    by
         CDS_CODE
+    ;
+    if
+        dropout_ay1999_data_row=1
+    then
+        do;
+            data_source = dropout_1999_2000_raw_sorted;
+        end;
+    else 
+        do;
+            data_source = dropout_2009_2010_raw_sorted;
+        end;
+run;
+
+
+* build analytic dataset from raw datasets with the least number of columns and
+minimal cleaning/transformation needed to address research questions in
+corresponding data-analysis files;
+data enr_dropout_analytic_file;
+    retain
+        CDS_CODE
+		YEAR
         ETHNIC
         GENDER	
-        KDGN
-		GR_1
-		GR_2
-		GR_3
-		GR_4
-		GR_5
-		GR_6
-		GR_7
-		GR_8
-		UNGR_ELM
-		GR_9
-		GR_10
-		GR_11
-		GR_12
-		UNGR_SEC
-		ENR_TOTAL
-		ADULT
-		E7
-		E8
-		E9
-		E10
-		E11
-		E12
-		EUS
-		ETOT
-		D7
-		D8
-		D9
-		D10
-		D11
-		D12
-		DUS
+        ENR_TOTAL
+		DTOT
+    ;
+    keep
+        CDS_CODE
+		YEAR
+        ETHNIC
+        GENDER	
+        ENR_TOTAL
 		DTOT
     ;
     merge
@@ -349,21 +348,4 @@ data enr_dropout_analytic_file;
 run;
 
 
-* use proc sort to create a temporary sorted table in descending by
-frpm_rate_change_2014_to_2015;
-proc sort
-        data=cde_2014_analytic_file
-        out=cde_2014_analytic_file_sort_frpm
-    ;
-    by descending frpm_rate_change_2014_to_2015;
-run;
 
-
-* use proc sort to create a temporary sorted table in descending by
-excess_sat_takers;
-proc sort
-        data=cde_2014_analytic_file
-        out=cde_2014_analytic_file_sort_sat
-    ;
-    by descending excess_sat_takers;
-run;

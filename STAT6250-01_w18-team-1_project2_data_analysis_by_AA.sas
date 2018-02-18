@@ -52,12 +52,13 @@ Note: This compares the column "Gender" from enr99
 to the column of the same name from enr09.
 Methodology: We print the data from enr99 and enr09 using where clause with 
 gender=M and gender=F.
-Followup Steps: We need to consider the population of males and females for better assessment
+Followup Steps: We need to consider the population of males and females for 
+better assessment
 ;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=enr_analytic_file_sort_first_M
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_first_M
     ;
 	where
 	    YEAR=9900 and GENDER = 'M'
@@ -68,8 +69,8 @@ proc sort
 run;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=enr_analytic_file_sort_first_F
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_first_F
     ;
 	where
 	    YEAR=9900 and GENDER = 'F'
@@ -80,8 +81,8 @@ proc sort
 run;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=enr_analytic_file_sort_sec_M
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_sec_M
     ;
 	where
 	    YEAR=910 and GENDER = 'M'
@@ -92,8 +93,8 @@ proc sort
 run;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=enr_analytic_file_sort_sec_F
+    data=enr_dropout_analytic_file
+        out=enr_analytic_file_sort_sec_F
     ;
 	where
 	    YEAR=910 and GENDER = 'F'
@@ -168,14 +169,13 @@ Note: This compares the column "ETHNIC" from enr99
 to the column of the same name from enr09.
 Methodology: We print the data for the top 5 observations with the least 
 number of enrollemnts. 
-Followup Steps: More carefully clean values in order to filter out any possible
-illegal values, and better handle missing data, e.g., by using a previous year's
-data or a rolling average of previous years' data as a proxy.
+Followup Steps: We need to consider the population of various ethnicities 
+better assessment
 ;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=enr_drp_analytic_file_sort_first
+    data=enr_dropout_analytic_file
+        out=enr_drp_analytic_file_sort_first
     ;
 	where
 	    YEAR=9900
@@ -186,7 +186,7 @@ proc sort
 run;
 
 proc sort
-        data=enr_dropout_analytic_file
+    data=enr_dropout_analytic_file
         out=enr_drp_analytic_file_sort_sec
     ;
 	where
@@ -252,8 +252,8 @@ better assessment
 ;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=drp_analytic_file_sort_first_M
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_first_M
     ;
 	where
 	    YEAR=9900 and GENDER = 'M'
@@ -264,8 +264,8 @@ proc sort
 run;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=drp_analytic_file_sort_first_F
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_first_F
     ;
 	where
 	    YEAR=9900 and GENDER = 'F'
@@ -276,8 +276,8 @@ proc sort
 run;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=drp_analytic_file_sort_sec_M
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_sec_M
     ;
 	where
 	    YEAR=910 and GENDER = 'M'
@@ -288,8 +288,8 @@ proc sort
 run;
 
 proc sort
-     data=enr_dropout_analytic_file
-     out=drp_analytic_file_sort_sec_F
+    data=enr_dropout_analytic_file
+        out=drp_analytic_file_sort_sec_F
     ;
 	where
 	    YEAR=910 and GENDER = 'F'

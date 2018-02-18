@@ -213,8 +213,8 @@ proc sort
     ;
     by
         CDS_CODE
-		ETHNIC
-		GENDER
+	ETHNIC
+	GENDER
     ;
 run;
 proc sort
@@ -225,8 +225,8 @@ proc sort
     ;
     by
         CDS_CODE
-		ETHNIC
-		GENDER
+	ETHNIC
+	GENDER
     ;
 run;
 
@@ -238,25 +238,25 @@ data enr_analytic_file;
     ;
 	retain
 	    YEAR
-        ETHNIC
-		GENDER
-		KDGN
-		GR_1
-		GR_2
-		GR_3
-		GR_4
-		GR_5
-		GR_6
-		GR_7
-		GR_8
-		UNGR_ELM
-		GR_9
-		GR_10
-		GR_11
-		GR_12
-		UNGR_SEC
-		ENR_TOTAL
-		ADULT
+            ETHNIC
+	    GENDER
+	    KDGN
+	    GR_1
+	    GR_2
+	    GR_3
+	    GR_4
+	    GR_5
+	    GR_6
+	    GR_7
+	    GR_8
+	    UNGR_ELM
+	    GR_9
+	    GR_10
+	    GR_11
+	    GR_12
+	    UNGR_SEC
+	    ENR_TOTAL
+	    ADULT
     ;
     by
         CDS_CODE

@@ -72,10 +72,10 @@ proc format;
         2=" Asian"
         3=" Pacific Islander"
         4=" Filipino"
-		5=" Hispanic/Latin"
-		6=" African American/Not Hispanic"
-		7=" White/ Not Hispanic"
-		8=" Multiple/No Response"
+        5=" Hispanic/Latin"
+        6=" African American/Not Hispanic"
+        7=" White/ Not Hispanic"
+        8=" Multiple/No Response"
     ;
     value $Gender_bins
         'F'=" Female"
@@ -84,20 +84,20 @@ proc format;
 	value $Dropouts_bins
         'E7'=" Enrollment in grade 7"
         'E8'=" Enrollment in grade 8"
-		'E9'=" Enrollment in grade 9"
-		'E10'=" Enrollment in grade 10"
-		'E11'=" Enrollment in grade 11"
-		'E12'=" Enrollment in grade 12"
-		'EUS'=" Enrollment in ungraded secondary classes in grades nine through twelve."
-		'ETOT'=" Total enrollment for grades nine through twelve."
-		'D7'=" Dropout in grade 7"
+        'E9'=" Enrollment in grade 9"
+        'E10'=" Enrollment in grade 10"
+        'E11'=" Enrollment in grade 11"
+        'E12'=" Enrollment in grade 12"
+        'EUS'=" Enrollment in ungraded secondary classes in grades nine through twelve."
+        'ETOT'=" Total enrollment for grades nine through twelve."
+        'D7'=" Dropout in grade 7"
         'D8'=" Dropout in grade 8"
-		'D9'=" Dropout in grade 9"
-		'D10'=" Dropout in grade 10"
-		'D11'=" Dropout in grade 11"
-		'D12'=" Dropout in grade 12"
-		'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
-		'DTOT'=" Total Dropout for grades nine through twelve."
+        'D9'=" Dropout in grade 9"
+        'D10'=" Dropout in grade 10"
+        'D11'=" Dropout in grade 11"
+        'D12'=" Dropout in grade 12"
+        'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
+        'DTOT'=" Total Dropout for grades nine through twelve."
     ;
 run;
 
@@ -339,8 +339,7 @@ data enr_dropout_analytic_file;
     ;
     merge
         enr_analytic_file
-        dropout_1999_2000_raw_sorted
-        dropout_2009_2010_raw_sorted
+        dropout_analytic_file
     ;
     by
         CDS_Code

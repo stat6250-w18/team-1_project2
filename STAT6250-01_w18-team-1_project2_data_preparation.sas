@@ -71,7 +71,8 @@ importing into Excel and setting all cell values to "Text" format
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsdropouts9808.asp
 
-[Unique ID Schema] The column "CDS_CODE" is the unique id in dataset droppouts00.
+[Unique ID Schema] The column "CDS_CODE" is the unique id in dataset 
+droppouts00.
 
 --
 
@@ -92,7 +93,8 @@ importing into Excel and setting all cell values to "Text" format
 
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsdropouts.asp
 
-[Unique ID Schema] The column "CDS_CODE" is the unique id in dataset droppouts10.
+[Unique ID Schema] The column "CDS_CODE" is the unique id in dataset 
+droppouts10.
 ;
 
 
@@ -223,8 +225,9 @@ https://github.com/stat6250/team-1_project2/blob/master/data/pubschls.xlsx?raw=t
     &inputDataset5Type.
 )
 
-* sort and check raw datasets for duplicates with respect to their unique ids,
-  removing blank rows, if needed;
+* sort and check raw datasets for duplicates with respect to their unique ids, 
+removing blank rows, if needed;
+
 proc sort
         nodupkey
         data=enr_1999_2000_raw
@@ -237,6 +240,7 @@ proc sort
         GENDER
     ;
 run;
+
 proc sort
         nodupkey
         data=enr_2009_2010_raw
@@ -249,6 +253,7 @@ proc sort
         GENDER
     ;
 run;
+
 proc sort
         nodupkey
         data=dropout_1999_2000_raw
@@ -261,6 +266,7 @@ proc sort
         GENDER
     ;
 run;
+
 proc sort
         nodupkey
         data=dropout_2009_2010_raw

@@ -5,59 +5,93 @@
 
 * 
 [Dataset 1 Name] enr99
+
 [Dataset Description] School-level enrollment by racial/ethnic designation, 
 gender and grade, AY1999-2000
+
 [Experimental Unit Description] California public K-12 schools in AY1999-2000
-[Number of Observations] 95,443      
+
+[Number of Observations] 95,443
+
 [Number of Features] 20
+
 [Data Source] The file https://www.cde.ca.gov/ds/sd/sd/filesenr.asp
 was downloaded and edited to produce file filesenr_1999_2000_edited.xls by 
 deleting worksheet "filesenr_1999_2000", reformatting column headers in 
 "filesenr_1999_2000" to remove characters disallowed in SAS variable names, 
 and setting all cell values to "Text" format
+
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsenr98.asp
+
 [Unique ID Schema] The column "CDS_CODE" is the unique id in dataset enr99, 
 which is also equivalent to the unique id column CDS_CODE in dataset enr09, 
 droppouts00 and droppouts10.
+
 --
+
 [Dataset 2 Name] enr09
+
 [Dataset Description] School-level enrollment by racial/ethnic designation, 
 gender and grade, AY2009-2010
+
 [Experimental Unit Description] California public K-12 schools in AY2009-2010
+
 [Number of Observations] 124,715     
+
 [Number of Features] 23
+
 [Data Source] The file https://www.cde.ca.gov/ds/sd/sd/filesenr.asp
 was downloaded and edited to produce file filesenr_2009_2010_edited.xls by 
 deleting worksheet "filesenr_2009_2010", reformatting column headers in 
 "filesenr_1999_2000" to remove characters disallowed in SAS variable names, 
 and setting all cell values to "Text" format
+
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsenr.asp
+
 [Unique ID Schema] The column "CDS_CODE" is the unique id in dataset enr09, 
 which is also equivalent to the unique id column CDS_CODE in dataset enr99, 
 droppouts00 and droppouts10.
+
 --
+
 [Dataset 3 Name] droppouts00
+
 [Dataset Description] Dropouts by race/ethnic designation and gender by school,
 AY1999-2000
+
 [Experimental Unit Description] California public K-12 schools in AY1999-2000
+
 [Number of Observations] 38,245
+
 [Number of Features] 20
+
 [Data Source] The file https://www.cde.ca.gov/ds/sd/sd/filesdropouts.asp was
 downloaded and edited to produce file filesdropouts_1999_2000_edited.xls by 
 importing into Excel and setting all cell values to "Text" format
+
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsdropouts9808.asp
+
 [Unique ID Schema] The column "CDS_CODE" is the unique id in dataset droppouts00.
+
 --
+
 [Dataset 4 Name] droppouts10
+
 [Dataset Description] Dropouts by race/ethnic designation and gender by school,
 AY2009-2010
+
 [Experimental Unit Description] California public K-12 schools in AY2009-2010
+
 [Number of Observations] 55,504
+
 [Number of Features] 20
+
 [Data Source] The file https://www.cde.ca.gov/ds/sd/sd/filesdropouts.asp was
 downloaded and edited to produce file filesdropouts_2009_2010_edited.xls by 
 importing into Excel and setting all cell values to "Text" format
+
 [Data Dictionary] https://www.cde.ca.gov/ds/sd/sd/fsdropouts.asp
+
 [Unique ID Schema] The column "CDS_CODE" is the unique id in dataset droppouts10.
 ;
 
@@ -72,32 +106,32 @@ proc format;
         2=" Asian"
         3=" Pacific Islander"
         4=" Filipino"
-		5=" Hispanic/Latin"
-		6=" African American/Not Hispanic"
-		7=" White/ Not Hispanic"
-		8=" Multiple/No Response"
+        5=" Hispanic/Latin"
+        6=" African American/Not Hispanic"
+        7=" White/ Not Hispanic"
+        8=" Multiple/No Response"
     ;
     value $Gender_bins
         'F'=" Female"
         'M'=" Male"
     ;
-	value $Dropouts_bins
+        value $Dropouts_bins
         'E7'=" Enrollment in grade 7"
         'E8'=" Enrollment in grade 8"
-		'E9'=" Enrollment in grade 9"
-		'E10'=" Enrollment in grade 10"
-		'E11'=" Enrollment in grade 11"
-		'E12'=" Enrollment in grade 12"
-		'EUS'=" Enrollment in ungraded secondary classes in grades nine through twelve."
-		'ETOT'=" Total enrollment for grades nine through twelve."
-		'D7'=" Dropout in grade 7"
+        'E9'=" Enrollment in grade 9"
+        'E10'=" Enrollment in grade 10"
+        'E11'=" Enrollment in grade 11"
+        'E12'=" Enrollment in grade 12"
+        'EUS'=" Enrollment in ungraded secondary classes in grades nine through twelve."
+        'ETOT'=" Total enrollment for grades nine through twelve."
+        'D7'=" Dropout in grade 7"
         'D8'=" Dropout in grade 8"
-		'D9'=" Dropout in grade 9"
-		'D10'=" Dropout in grade 10"
-		'D11'=" Dropout in grade 11"
-		'D12'=" Dropout in grade 12"
-		'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
-		'DTOT'=" Total Dropout for grades nine through twelve."
+        'D9'=" Dropout in grade 9"
+        'D10'=" Dropout in grade 10"
+        'D11'=" Dropout in grade 11"
+        'D12'=" Dropout in grade 12"
+        'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
+        'DTOT'=" Total Dropout for grades nine through twelve."
     ;
 run;
 
@@ -223,8 +257,8 @@ proc sort
     ;
     by
         CDS_CODE
-	ETHNIC
-	GENDER
+        ETHNIC
+        GENDER
     ;
 run;
 proc sort
@@ -235,8 +269,8 @@ proc sort
     ;
     by
         CDS_CODE
-	ETHNIC
-	GENDER
+        ETHNIC
+        GENDER
     ;
 run;
 
@@ -246,27 +280,27 @@ data enr_analytic_file;
         enr_1999_2000_raw_sorted(in=enr_ay1999_data_row)
         enr_2009_2010_raw_sorted(in=enr_ay2009_data_row)
     ;
-	retain
-	    YEAR
+        retain
+            YEAR
             ETHNIC
-	    GENDER
-	    KDGN
-	    GR_1
-	    GR_2
-	    GR_3
-	    GR_4
-	    GR_5
-	    GR_6
-	    GR_7
-	    GR_8
-	    UNGR_ELM
-	    GR_9
-	    GR_10
-	    GR_11
-	    GR_12
-	    UNGR_SEC
-	    ENR_TOTAL
-	    ADULT
+            GENDER
+            KDGN
+            GR_1
+            GR_2
+            GR_3
+            GR_4
+            GR_5
+            GR_6
+            GR_7
+            GR_8
+            UNGR_ELM
+            GR_9
+            GR_10
+            GR_11
+            GR_12
+            UNGR_SEC
+            ENR_TOTAL
+            ADULT
     ;
     by
         CDS_CODE
@@ -290,26 +324,26 @@ data dropout_analytic_file;
         dropout_1999_2000_raw_sorted(in=dropout_ay1999_data_row)
         dropout_2009_2010_raw_sorted(in=dropout_ay2009_data_row)
     ;
-	retain
-	    YEAR
+        retain
+            YEAR
             ETHNIC
-	    GENDER
-	    E7
-	    E8
-	    E9
-	    E10
-	    E11
-	    E12
-	    EUS
-	    ETOT
-	    D7
-	    D8
-	    D9
-	    D10
-	    D11
-	    D12
-	    DUS
-	    DTOT
+            GENDER
+            E7
+            E8
+            E9
+            E10
+            E11
+            E12
+            EUS
+            ETOT
+            D7
+            D8
+            D9
+            D10
+            D11
+            D12
+            DUS
+            DTOT
     ;
     by
         CDS_CODE
@@ -333,19 +367,19 @@ corresponding data-analysis files;
 data enr_dropout_analytic_file;
     retain
         CDS_CODE
-	YEAR
+        YEAR
         ETHNIC
         GENDER	
         ENR_TOTAL
-	DTOT
+        DTOT
     ;
     keep
         CDS_CODE
-	YEAR
+        YEAR
         ETHNIC
         GENDER	
         ENR_TOTAL
-	DTOT
+        DTOT
     ;
     merge
         enr_analytic_file

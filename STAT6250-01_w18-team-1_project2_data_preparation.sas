@@ -115,7 +115,7 @@ proc format;
         'F'=" Female"
         'M'=" Male"
     ;
-        value $Dropouts_bins
+    value $Dropouts_bins
         'E7'=" Enrollment in grade 7"
         'E8'=" Enrollment in grade 8"
         'E9'=" Enrollment in grade 9"

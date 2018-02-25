@@ -47,6 +47,7 @@ footnote2
 
 footnote3
 "Based on the output, Los Angeles Unified has always been the district that got highest Enrollment."
+;
 
 *
 Note: This compares the total enrollment by district by year.
@@ -103,7 +104,7 @@ proc sort
 run;
 
 proc print
-        data=enr_drop_dist_group_9900(obs=2)
+    data=enr_drop_dist_group_9900(obs=2)
     ;
     id
         District 
@@ -111,6 +112,8 @@ proc print
     ;
     var
         total_enr
+    ;
+    format YEAR Year_Val.
     ;
 run;
 
@@ -121,12 +124,13 @@ proc sort
     by 
         descending total_enr
     ;
-    where year=910
+    where 
+    	year=910
     ;
 run;
 
 proc print
-        data=enr_drop_dist_group_0910(obs=2)
+    data=enr_drop_dist_group_0910(obs=2)
     ;
     id
         District 
@@ -134,6 +138,8 @@ proc print
     ;
     var
         total_enr
+    ;
+    format YEAR Year_Val.
     ;
 run;
 
@@ -211,7 +217,8 @@ run;
 proc print
 	data= drop_rate_by_year
 	;
-	
+	format YEAR Year_Val.
+    ;
 run;
 
 title;
@@ -235,7 +242,7 @@ footnote1
 
 footnote2
 "In ay 2009-2010, African American/Not Hispanic students had the highest dropout rate with nearly 2.1 percent."
-
+;
 
 *
 Note: This compares the dropout rate by ethnicity.
@@ -254,6 +261,19 @@ illegal values, and better handle missing data, e.g., by using a previous year's
 data or a rolling average of previous years' data as a proxy.
 ;
 
+proc format;
+    value Race_Ethnicity_bins
+        0=" Not reported"
+        1=" American Indian/Alaska Native"
+        2=" Asian"
+        3=" Pacific Islander"
+        4=" Filipino"
+        5=" Hispanic/Latin"
+        6=" African American/Not Hispanic"
+        7=" White/ Not Hispanic"
+        8=" Multiple/No Response"
+        9=" Two or More Races"
+        ;
 proc sql; create table enr_drop_by_ethnic as 
     select
         year
@@ -293,6 +313,8 @@ proc print
     var
         drop_rate
     ;
+    format
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
 run;
 
 proc sort 
@@ -315,6 +337,8 @@ proc print
     var
         drop_rate
     ;
+    format
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
 run;
 
 title;

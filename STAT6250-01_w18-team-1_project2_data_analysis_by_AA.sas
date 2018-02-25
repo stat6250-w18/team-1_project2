@@ -5,10 +5,12 @@
 
 *
 This file uses the following analytic dataset to address several research
-questions regarding college-preparation trends at CA public K-12 schools
-Dataset Name: cde_2014_analytic_file created in external file
+questions regarding enrollment and dropout trends at CA public K-12 schools
+
+Dataset Name: enr_dropout_analytic_file created in external file
 STAT6250-01_w18-team-1_project2_data_preparation.sas, which is assumed to be
 in the same directory as this file
+
 See included file for dataset properties
 ;
 
@@ -50,8 +52,10 @@ footnote3
 *
 Note: This compares the column "Gender" from enr99
 to the column of the same name from enr09.
+
 Methodology: We print the data from enr99 and enr09 using where clause with 
 gender=M and gender=F.
+
 Followup Steps: We need to consider the population of males and females for 
 better assessment
 ;
@@ -60,10 +64,10 @@ proc sort
     data=enr_dropout_analytic_file
         out=enr_analytic_file_sort_first_M
     ;
-	where
-	    YEAR=9900 and GENDER = 'M'
-	;
-	by
+    where
+        YEAR=9900 and GENDER = 'M'
+    ;
+    by
         descending ENR_TOTAL
     ;
 run;
@@ -72,10 +76,10 @@ proc sort
     data=enr_dropout_analytic_file
         out=enr_analytic_file_sort_first_F
     ;
-	where
-	    YEAR=9900 and GENDER = 'F'
-	;
-	by
+    where
+        YEAR=9900 and GENDER = 'F'
+    ;
+    by
         descending ENR_TOTAL
     ;
 run;
@@ -84,10 +88,10 @@ proc sort
     data=enr_dropout_analytic_file
         out=enr_analytic_file_sort_sec_M
     ;
-	where
-	    YEAR=910 and GENDER = 'M'
-	;
-	by
+    where
+        YEAR=910 and GENDER = 'M'
+    ;
+    by
         descending ENR_TOTAL
     ;
 run;
@@ -96,44 +100,68 @@ proc sort
     data=enr_dropout_analytic_file
         out=enr_analytic_file_sort_sec_F
     ;
-	where
-	    YEAR=910 and GENDER = 'F'
-	;
-	by
+    where
+        YEAR=910 and GENDER = 'F'
+    ;
+    by
         descending ENR_TOTAL
     ;
 run;
 
 proc print
-    data=enr_analytic_file_sort_first_M(obs=5)
+    data=enr_analytic_file_sort_first_M(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER ENR_TOTAL 
-	;
+    var
+        YEAR CDS_CODE GENDER ENR_TOTAL
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
+    ;
 run;
 
 proc print
-    data=enr_analytic_file_sort_sec_M(obs=5)
+    data=enr_analytic_file_sort_sec_M(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER ENR_TOTAL 
-	;
+    var
+        YEAR CDS_CODE GENDER ENR_TOTAL 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
+    ;
 run;
 
 proc print
-    data=enr_analytic_file_sort_first_F(obs=5)
+    data=enr_analytic_file_sort_first_F(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER ENR_TOTAL 
-	;
+    var
+        YEAR CDS_CODE GENDER ENR_TOTAL 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
+    ;
 run;
 
 proc print
-    data=enr_analytic_file_sort_sec_F(obs=5)
+    data=enr_analytic_file_sort_sec_F(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER ENR_TOTAL 
-	;
+    var
+        YEAR CDS_CODE GENDER ENR_TOTAL 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
+    ;
 run;
 
 title;
@@ -153,22 +181,24 @@ title2
 ;
 
 footnote1
-"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: White/Not Hispanic, American Indian/Alaska Native, Hispanic/Latin."
+"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: Asian, American Indian/Alaska Native, Filipino."
 ;
 
 footnote2
-"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: Hispanic/Latin, African American/Not Hispanic, White/ Not Hispanic."
+"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: Asian, American Indian/Alaska Native, Pacific Islander, Filipino."
 ;
 
 footnote3
-"There has been a significant increase in enrollment in a decade for white ethnicity, also enrollment decreased for Hispanic/Latin."
+"There has been no significant improvement in enrollment in a decade for Asian, American Indian/Alaska Native, Filipino ethnicities."
 ;
 
 *
 Note: This compares the column "ETHNIC" from enr99
 to the column of the same name from enr09.
+
 Methodology: We print the data for the top 5 observations with the least 
-number of enrollments. 
+number of enrollments.
+ 
 Followup Steps: We need to consider the population of various ethnicities 
 better assessment
 ;
@@ -177,10 +207,10 @@ proc sort
     data=enr_dropout_analytic_file
         out=enr_drp_analytic_file_sort_first
     ;
-	where
-	    YEAR=9900
-	;
-	by
+    where
+        YEAR=9900
+    ;
+    by
         ENR_TOTAL
     ;
 run;
@@ -189,29 +219,46 @@ proc sort
     data=enr_dropout_analytic_file
         out=enr_drp_analytic_file_sort_sec
     ;
-	where
-	    YEAR=910
-	;
-	
+    where
+        YEAR=910
+    ;
     by
         ENR_TOTAL
     ;
 run;
 
 proc print
-    data=enr_drp_analytic_file_sort_first(obs=5)
+    data=enr_drp_analytic_file_sort_first(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE ETHNIC ENR_TOTAL
+    var
+        YEAR CDS_CODE ETHNIC ENR_TOTAL
     ; 
+    where
+        ENR_TOTAL ne . AND ENR_TOTAL ne 0 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. ETHNIC Race_Ethnicity_bins.
+    ;
+    label
+        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
+    ;
 run;
 
 proc print
-    data=enr_drp_analytic_file_sort_sec(obs=5)
+    data=enr_drp_analytic_file_sort_sec(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE ETHNIC ENR_TOTAL 
-	;
+    var
+        YEAR CDS_CODE ETHNIC ENR_TOTAL 
+    ;
+    where
+        ENR_TOTAL ne . AND ENR_TOTAL ne 0 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. ETHNIC Race_Ethnicity_bins.
+    ;
+    label
+        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
+    ;
 run;
 
 title;
@@ -235,18 +282,24 @@ footnote1
 ;
 
 footnote2
-"In AY2009-2010, the gap of the number of dropouts between males and females increases significantly, with males having higher dropouts"
+"In AY2009-2010, the gap of the number of dropouts between males and females increases significantly, with males having higher dropouts in absolute numbers"
 ;
 
 footnote3
+"From AY1999-2000 to AY2009-2010, the dropouts for top 5 observations almost doubles both in case of males and females"
+;
+
+footnote4
 "We need to further analyze the reasons for increase in dropouts of male students"
 ;
 
 *
 Note: This compares the column "Gender" from droppouts00
 to the column of the same name from droppouts10.
+
 Methodology: We print the data from droppouts00 and droppouts10 using 
 where clause with gender=M and gender=F.
+
 Followup Steps: We need to consider the population of males and females for 
 better assessment
 ;
@@ -255,10 +308,10 @@ proc sort
     data=enr_dropout_analytic_file
         out=drp_analytic_file_sort_first_M
     ;
-	where
-	    YEAR=9900 and GENDER = 'M'
-	;
-	by
+    where
+        YEAR=9900 and GENDER = 'M'
+    ;
+    by
         descending DTOT
     ;
 run;
@@ -267,10 +320,10 @@ proc sort
     data=enr_dropout_analytic_file
         out=drp_analytic_file_sort_first_F
     ;
-	where
-	    YEAR=9900 and GENDER = 'F'
-	;
-	by
+    where
+        YEAR=9900 and GENDER = 'F'
+    ;
+    by
         descending DTOT
     ;
 run;
@@ -279,10 +332,10 @@ proc sort
     data=enr_dropout_analytic_file
         out=drp_analytic_file_sort_sec_M
     ;
-	where
-	    YEAR=910 and GENDER = 'M'
-	;
-	by
+    where
+        YEAR=910 and GENDER = 'M'
+    ;
+    by
         descending DTOT
     ;
 run;
@@ -291,44 +344,68 @@ proc sort
     data=enr_dropout_analytic_file
         out=drp_analytic_file_sort_sec_F
     ;
-	where
-	    YEAR=910 and GENDER = 'F'
-	;
-	by
+    where
+        YEAR=910 and GENDER = 'F'
+    ;
+    by
         descending DTOT
     ;
 run;
 
 proc print
-    data=drp_analytic_file_sort_first_M(obs=5)
+    data=drp_analytic_file_sort_first_M(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER DTOT 
-	;
+    var
+        YEAR CDS_CODE GENDER DTOT 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
+    ;
 run;
 
 proc print
-    data=drp_analytic_file_sort_sec_M(obs=5)
+    data=drp_analytic_file_sort_sec_M(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER DTOT 
-	;
+    var
+        YEAR CDS_CODE GENDER DTOT 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
+    ;
 run;
 
 proc print
-    data=drp_analytic_file_sort_first_F(obs=5)
+    data=drp_analytic_file_sort_first_F(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER DTOT 
-	;
+    var
+        YEAR CDS_CODE GENDER DTOT 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
+    ;
 run;
 
 proc print
-    data=drp_analytic_file_sort_sec_F(obs=5)
+    data=drp_analytic_file_sort_sec_F(obs=5) label
     ; 
-	var
-	    YEAR CDS_CODE GENDER DTOT 
-	;
+    var
+        YEAR CDS_CODE GENDER DTOT 
+    ;
+    format
+        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
+    ;
+    label
+        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
+    ;
 run;
 
 title;

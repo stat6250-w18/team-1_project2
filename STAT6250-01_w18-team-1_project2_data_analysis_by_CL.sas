@@ -150,7 +150,7 @@ proc print
     var
         drop_pct
     ;
-    format year acayear.;
+    format year aca_year.;
 run;
 
 proc sort 
@@ -171,7 +171,7 @@ proc print
     var
         drop_pct
     ;
-    format year acayear.;
+    format year aca_year.;
 run;
 
 title;

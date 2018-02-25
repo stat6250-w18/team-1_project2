@@ -70,12 +70,12 @@ high dropout rates over different periods of time.
 proc sql; create table enr_drop_names as 
     select 
         a.*
-	    ,b.District
+        ,b.District
     from 
         enr_dropout_analytic_file as a
-	left join 
+    left join 
         pubschls_raw as b
-	on a.cds_code=input(b.cdscode,30.)
+    on a.cds_code=input(b.cdscode,30.)
     ;
 quit;
 
@@ -86,7 +86,7 @@ data enr_drop_names_eth;
     then 
         minority = 1
     ;
-	else if 
+    else if 
         ethnic = 7 
     then 
         minority = 0
@@ -102,16 +102,16 @@ proc sql; create table enr_drop_agg as
         ,sum(dtot) as total_drop
     from 
         enr_drop_names_eth
-	group by 
+    group by 
         year
         ,district
         ,minority
-	;
+    ;
 quit; 
 
 data enr_drop_pct;
-	set enr_drop_agg;
-	drop_pct = total_drop/total_enr;
+    set enr_drop_agg;
+    drop_pct = total_drop/total_enr;
 run;
 
 proc sort 
@@ -124,10 +124,10 @@ proc sort
 run;
 
 proc print
-        data=enr_drop_pct_min00(obs=5)
-    ;
+    data=enr_drop_pct_min00 (obs=5);
     id
-        District year
+        District 
+        year
     ;
     var
         drop_pct
@@ -144,8 +144,7 @@ proc sort
 run;
 
 proc print
-        data=enr_drop_pct_min10(obs=5)
-    ;
+    data=enr_drop_pct_min10 (obs=5);
     id
         District 
         year
@@ -214,13 +213,13 @@ proc sql; create table enr_drop_tot as
     	    ,sum(enr_total) as total_enr
         from 
             enr_drop_names_eth
-    	group by 
+        group by 
             year
             ,minority
         ) 
     group by 
         year
-	;
+    ;
 quit; 
 
 data enr_drop_tot_pct;
@@ -285,17 +284,17 @@ run;
 
 proc freq
     data = enr_drop_names;
-	table 
+    table 
         district*ethnic 
         / nofreq nocol nopercent
     ;
-	format ethnic ethnicity.;
+    format ethnic ethnicity.;
     where District in (
-            'Inyo County Office of Education'
-            'Lynwood Unified'
-            'Nevada County Office of Education'
-            'Golden Plains Unified'
-            'Los Angeles County Office of Education')
+        'Inyo County Office of Education'
+        'Lynwood Unified'
+        'Nevada County Office of Education'
+        'Golden Plains Unified'
+        'Los Angeles County Office of Education')
         and year=910
     ;
 run;

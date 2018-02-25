@@ -269,7 +269,7 @@ title2
 ;
 
 footnote1
-"Among the districts with the highest droupout rates in 2009-2000, Hispanic or Latino students appear to make up the largest ethnic group."
+"Among the districts with the highest droupout rates in 2009-2010, Hispanic or Latino students appear to make up the largest ethnic group."
 ;
 
 *
@@ -285,24 +285,78 @@ Limitations: It appears district level dropout rate might be
 too granular, resulting in low counts.
 
 Followup Steps: Look into aggregating at a higher level, such 
-as county. Look at actual number of enrollments rather than
-rows it appears in data set.
+as county.
 ;
 
-proc freq
-    data = enr_drop_names;
-    table 
-        district*ethnic 
-        / nofreq nocol nopercent
+proc sql; create table enr_drop_agg_eth as 
+    select
+        year
+        ,district
+        ,ethnic
+	    ,sum(enr_total) as total_enr
+		,sum(dtot) as total_drop 
+    from 
+        (
+        select *
+        from enr_drop_names_eth
+        where District in (
+            'Inyo County Office of Education'
+            'Lynwood Unified'
+            'Nevada County Office of Education'
+            'Golden Plains Unified'
+            'Los Angeles County Office of Education')
+            and year=910
+        )
+	group by 
+        year
+        ,district
+        ,ethnic
+	;
+quit; 
+
+proc means 
+    data=enr_drop_agg_eth 
+        noprint
     ;
-    format ethnic ethnicity.;
-    where District in (
-        'Inyo County Office of Education'
-        'Lynwood Unified'
-        'Nevada County Office of Education'
-        'Golden Plains Unified'
-        'Los Angeles County Office of Education')
-        and year=910
+    var 
+        total_enr
+    ;
+    by 
+        district
+    ;                                                    
+    output 
+        out=dist_tot 
+            (keep=district total_sum) 
+        sum=total_sum
+    ;         
+run;  
+
+proc sql; create table enr_drop_agg_eth2 as 
+    select a.*
+        ,b.total_sum
+        ,(a.total_enr/b.total_sum)*100 as ethnic_pct
+    from enr_drop_agg_eth as a 
+    left join dist_tot as b
+    on a.district=b.district
+    ;
+quit;
+
+proc sort 
+    data=enr_drop_agg_eth2; 
+    by 
+        district 
+        descending 
+        ethnic_pct
+    ; 
+run;
+
+proc print 
+    data=enr_drop_agg_eth2;
+	format ethnic ethnicity.;
+	var 
+        district 
+        ethnic 
+        ethnic_pct
     ;
 run;
 

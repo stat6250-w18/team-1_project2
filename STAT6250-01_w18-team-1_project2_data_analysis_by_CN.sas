@@ -113,6 +113,8 @@ proc print
     var
         total_enr
     ;
+    format YEAR Year_Val.
+    ;
 run;
 
 proc sort 
@@ -136,6 +138,8 @@ proc print
     ;
     var
         total_enr
+    ;
+    format YEAR Year_Val.
     ;
 run;
 
@@ -213,7 +217,8 @@ run;
 proc print
 	data= drop_rate_by_year
 	;
-	
+	format YEAR Year_Val.
+    ;
 run;
 
 title;
@@ -256,6 +261,19 @@ illegal values, and better handle missing data, e.g., by using a previous year's
 data or a rolling average of previous years' data as a proxy.
 ;
 
+proc format;
+    value Race_Ethnicity_bins
+        0=" Not reported"
+        1=" American Indian/Alaska Native"
+        2=" Asian"
+        3=" Pacific Islander"
+        4=" Filipino"
+        5=" Hispanic/Latin"
+        6=" African American/Not Hispanic"
+        7=" White/ Not Hispanic"
+        8=" Multiple/No Response"
+        9=" Two or More Races"
+        ;
 proc sql; create table enr_drop_by_ethnic as 
     select
         year
@@ -295,6 +313,8 @@ proc print
     var
         drop_rate
     ;
+    format
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
 run;
 
 proc sort 
@@ -317,6 +337,8 @@ proc print
     var
         drop_rate
     ;
+    format
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
 run;
 
 title;

@@ -117,6 +117,10 @@ proc format;
         'F'=" Female"
         'M'=" Male"
     ;
+    value Year_Val
+        9900=" 1999-2000"
+        910=" 2009-2010"
+    ;
     value $Dropouts_bins
         'E7'=" Enrollment in grade 7"
         'E8'=" Enrollment in grade 8"
@@ -287,6 +291,7 @@ data enr_analytic_file;
         enr_2009_2010_raw_sorted(in=enr_ay2009_data_row)
     ;
         retain
+            CDS_CODE
             YEAR
             ETHNIC
             GENDER
@@ -331,6 +336,7 @@ data dropout_analytic_file;
         dropout_2009_2010_raw_sorted(in=dropout_ay2009_data_row)
     ;
         retain
+            CDS_CODE
             YEAR
             ETHNIC
             GENDER

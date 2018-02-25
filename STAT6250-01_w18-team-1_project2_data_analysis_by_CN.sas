@@ -47,6 +47,7 @@ footnote2
 
 footnote3
 "Based on the output, Los Angeles Unified has always been the district that got highest Enrollment."
+;
 
 *
 Note: This compares the total enrollment by district by year.
@@ -103,7 +104,7 @@ proc sort
 run;
 
 proc print
-        data=enr_drop_dist_group_9900(obs=2)
+    data=enr_drop_dist_group_9900(obs=2)
     ;
     id
         District 
@@ -121,12 +122,13 @@ proc sort
     by 
         descending total_enr
     ;
-    where year=910
+    where 
+    	year=910
     ;
 run;
 
 proc print
-        data=enr_drop_dist_group_0910(obs=2)
+    data=enr_drop_dist_group_0910(obs=2)
     ;
     id
         District 
@@ -235,7 +237,7 @@ footnote1
 
 footnote2
 "In ay 2009-2010, African American/Not Hispanic students had the highest dropout rate with nearly 2.1 percent."
-
+;
 
 *
 Note: This compares the dropout rate by ethnicity.

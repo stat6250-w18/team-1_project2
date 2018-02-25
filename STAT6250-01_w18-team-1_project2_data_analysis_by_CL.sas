@@ -98,8 +98,8 @@ proc sql; create table enr_drop_agg as
         year
         ,district
         ,minority
-	    ,sum(enr_total) as total_enr
-		,sum(dtot) as total_drop
+        ,sum(enr_total) as total_enr
+        ,sum(dtot) as total_drop
     from 
         enr_drop_names_eth
 	group by 
@@ -147,12 +147,14 @@ proc print
         data=enr_drop_pct_min10(obs=5)
     ;
     id
-        District year
+        District 
+        year
     ;
     var
         drop_pct
     ;
 run;
+
 title;
 footnote;
 
@@ -297,7 +299,6 @@ proc freq
         and year=910
     ;
 run;
-
 
 title;
 footnote;

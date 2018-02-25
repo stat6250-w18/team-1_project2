@@ -67,6 +67,24 @@ examination of select districts and compare the same districts with
 high dropout rates over different periods of time.
 ;
 
+proc format;
+    value ethnicity
+        0 = 'Not reported'
+        1 = 'American Indian or Alaska Native, Not Hispanic'
+        2 = 'Asian, Not Hispanic'
+        3 = 'Pacific Islander, Not Hispanic'
+        4 = 'Filipino, Not Hispanic'
+        5 = 'Hispanic or Latino'
+        6 = 'African American, not Hispanic'
+        7 = 'White, not Hispanic'
+        9 = 'Two or More Races, Not Hispanic'
+    ; 
+    value aca_year
+        910 = "2009 - 2010"
+        9900 = "1999 - 2000"
+    ;
+run;
+
 proc sql; create table enr_drop_names as 
     select 
         a.*
@@ -132,6 +150,7 @@ proc print
     var
         drop_pct
     ;
+    format year acayear.;
 run;
 
 proc sort 
@@ -152,6 +171,7 @@ proc print
     var
         drop_pct
     ;
+    format year acayear.;
 run;
 
 title;
@@ -229,6 +249,7 @@ run;
 
 proc print 
     data=enr_drop_tot_pct; 
+    format year aca_year.;
 run;
 
 title;
@@ -267,20 +288,6 @@ Followup Steps: Look into aggregating at a higher level, such
 as county. Look at actual number of enrollments rather than
 rows it appears in data set.
 ;
-proc format;
-    value ethnicity
-        0 = 'Not reported'
-        1 = 'American Indian or Alaska Native, Not Hispanic'
-        2 = 'Asian, Not Hispanic'
-        3 = 'Pacific Islander, Not Hispanic'
-        4 = 'Filipino, Not Hispanic'
-        5 = 'Hispanic or Latino'
-        6 = 'African American, not Hispanic'
-        7 = 'White, not Hispanic'
-        9 = 'Two or More Races, Not Hispanic'
-    ; 
-run;
-
 
 proc freq
     data = enr_drop_names;

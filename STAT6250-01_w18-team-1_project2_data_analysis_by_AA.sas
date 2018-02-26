@@ -46,7 +46,7 @@ footnote2
 ;
 
 footnote3
-"There has been a significant increase in the number of female enrollements in a decade."
+"There has been a significant increase in the number of male and female enrollements in a decade."
 ;
 
 *
@@ -55,6 +55,9 @@ to the column of the same name from enr09.
 
 Methodology: We print the data from enr99 and enr09 using where clause with 
 gender=M and gender=F.
+
+Limitations: The enrollment data would require the population demographics in
+regards to sex to provide better insights.
 
 Followup Steps: We need to consider the population of males and females for 
 better assessment
@@ -198,6 +201,9 @@ to the column of the same name from enr09.
 
 Methodology: We print the data for the top 5 observations with the least 
 number of enrollments.
+
+Limitations: The enrollment data would require the population demographics in
+regards to ethnicity to provide better insights.
  
 Followup Steps: We need to consider the population of various ethnicities 
 better assessment
@@ -299,6 +305,9 @@ to the column of the same name from droppouts10.
 
 Methodology: We print the data from droppouts00 and droppouts10 using 
 where clause with gender=M and gender=F.
+
+Limitations: The dropout data would require the population demographics in
+regards to sex to provide better insights.
 
 Followup Steps: We need to consider the population of males and females for 
 better assessment

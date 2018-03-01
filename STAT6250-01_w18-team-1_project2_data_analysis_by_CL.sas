@@ -68,7 +68,9 @@ high dropout rates over different periods of time.
 ;
 
 proc print
-    data=enr_drop_pct_min00 (obs=5);
+    data=enr_drop_pct_min00 (obs=5)
+        label
+    ;
     id
         District 
         year
@@ -76,11 +78,20 @@ proc print
     var
         drop_pct
     ;
-    format year year_val.;
+    format 
+        year year_val.
+        drop_pct percent10.
+    ;
+    label
+        year="Academic Year"
+        district="School District"
+        drop_pct="Drop Percentage"
+    ;
 run;
 
 proc print
-    data=enr_drop_pct_min10 (obs=5);
+    data=enr_drop_pct_min10 (obs=5)
+        label;
     id
         District 
         year
@@ -88,7 +99,15 @@ proc print
     var
         drop_pct
     ;
-    format year year_val.;
+    format 
+        year year_val.
+        drop_pct percent10.
+    ;
+    label
+        year="Academic Year"
+        district="School District"
+        drop_pct="Drop Percentage"
+    ;
 run;
 
 title;
@@ -137,8 +156,23 @@ of data to look at the trand in enrollment among minorities.
 ;
 
 proc print 
-    data=enr_drop_tot_pct; 
-    format year year_val.;
+    data=enr_drop_tot_pct
+        label
+    ; 
+    format 
+        year year_val.
+        minority minority_val.
+	total_enr comma9.
+	all comma9.
+	enr_pct percent10.
+    ;
+    label
+        year="Academic Year"
+        minority="Ethnic Group"
+        total_enr="Number Enrolled"
+        all="All Students"
+        enr_pct="Enrollment Percentage"
+    ;
 run;
 
 title;
@@ -178,12 +212,22 @@ as county.
 ;
 
 proc print 
-    data=enr_drop_agg_eth2;
-	format ethnic Race_Ethnicity_bins.;
-	var 
+    data=enr_drop_agg_eth2 
+        label
+    ;
+    format 
+        ethnic Race_Ethnicity_bins.
+	ethnic_pct percent10.
+    ;
+    var 
         district 
         ethnic 
         ethnic_pct
+    ;
+    label
+        district="School District"
+        ethnic="Ethnicity"
+        ethnic_pct="Percent"
     ;
 run;
 

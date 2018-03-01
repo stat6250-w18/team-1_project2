@@ -104,14 +104,16 @@ droppouts10.
 
 proc format;
     value Race_Ethnicity_bins
-        1=" American Indian/Alaska Native"
-        2=" Asian"
-        3=" Pacific Islander"
-        4=" Filipino"
-        5=" Hispanic/Latin"
-        6=" African American/Not Hispanic"
-        7=" White/ Not Hispanic"
-        8=" Multiple/No Response"
+		0=" Not reported"
+		1=" American Indian/Alaska Native"
+		2=" Asian"
+		3=" Pacific Islander"
+		4=" Filipino"
+		5=" Hispanic/Latin"
+		6=" African American/Not Hispanic"
+		7=" White/ Not Hispanic"
+		8=" Multiple/No Response"
+		9=" Two or More Races, Not Hispanic"
     ;
     value $Gender_bins
         'F'=" Female"
@@ -401,3 +403,188 @@ data enr_dropout_analytic_file;
         CDS_Code
     ;
 run;
+
+
+* Creation of tables and data sets, and PROC SORT steps required in 
+analysis file by AA;
+proc sql; create table enr_drop_by_gender as 
+    select
+        year
+        ,gender
+	    	,sum(enr_total) as total_enr
+			,sum(dtot) as total_drop
+    from 
+        enr_dropout_analytic_file
+	group by 
+        year
+        ,gender
+	;
+quit;
+
+data enr_drop_rate_gender;
+	set enr_drop_by_gender;
+	total_enr_rate = total_enr;
+	total_drop_rate = total_drop;
+	enr_rate = total_enr/total_drop;
+	drop_rate = total_drop/total_enr;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=enr_rate_tot_gender_sorted_9900;
+    by 
+        total_enr_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=enr_rate_gender_sorted_9900;
+    by 
+        enr_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=enr_rate_tot_gender_sorted_0910
+    ;
+    by 
+        total_enr_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=enr_rate_gender_sorted_0910
+    ;
+    by 
+        enr_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sql; create table enr_dropout_by_ethnic as 
+    select
+        year
+        ,ethnic
+	    	,sum(enr_total) as total_enr
+			,sum(dtot) as total_drop
+    from 
+        enr_dropout_analytic_file
+	group by 
+        year
+        ,ethnic
+	;
+quit;
+
+data enr_rate_ethnic;
+    set enr_dropout_by_ethnic;
+	total_enr_rate = total_enr;
+	enr_rate = total_enr/total_drop;
+run;
+
+proc sort 
+    data=enr_rate_ethnic 
+    out=enr_tot_rate_ethnic_sorted_9900;
+    by 
+        total_enr_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_rate_ethnic 
+    out=enr_rate_ethnic_sorted_9900
+    ;
+    by 
+        enr_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_rate_ethnic 
+    out=enr_tot_rate_ethnic_sorted_0910
+    ;
+    by 
+        total_enr_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sort 
+    data=enr_rate_ethnic 
+    out=enr_rate_ethnic_sorted_0910
+    ;
+    by 
+        enr_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_tot_gender_sorted_9900;
+    by 
+        descending total_drop_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_gender_sorted_9900;
+    by 
+        descending drop_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_tot_gender_sorted_0910
+    ;
+    by 
+        descending total_drop_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_gender_sorted_0910
+    ;
+    by 
+        descending drop_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+

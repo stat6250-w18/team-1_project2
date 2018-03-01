@@ -521,11 +521,11 @@ proc sql; create table enr_drop_agg_eth as
             'Los Angeles County Office of Education')
             and year=910
         )
-	group by 
+    group by 
         year
         ,district
         ,ethnic
-	;
+    ;
 quit; 
 
 proc means 

@@ -669,3 +669,85 @@ proc sort
     	year=9900
     ;
 run;
+
+proc sort 
+    data=enr_rate_ethnic 
+    out=enr_rate_ethnic_sorted_9900
+    ;
+    by 
+        enr_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_rate_ethnic 
+    out=enr_tot_rate_ethnic_sorted_0910
+    ;
+    by 
+        total_enr_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sort 
+    data=enr_rate_ethnic 
+    out=enr_rate_ethnic_sorted_0910
+    ;
+    by 
+        enr_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_tot_gender_sorted_9900;
+    by 
+        descending total_drop_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_gender_sorted_9900;
+    by 
+        descending drop_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_tot_gender_sorted_0910
+    ;
+    by 
+        descending total_drop_rate
+    ;
+    where
+    	year=910
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_gender 
+    out=drop_rate_gender_sorted_0910
+    ;
+    by 
+        descending drop_rate
+    ;
+    where
+    	year=910
+    ;
+run;

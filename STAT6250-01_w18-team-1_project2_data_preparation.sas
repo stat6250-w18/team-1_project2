@@ -141,6 +141,10 @@ proc format;
         'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
         'DTOT'=" Total Dropout for grades nine through twelve."
     ;
+    value minority_val
+        1="Non-White"
+        0="White"
+    ;
 run;
 
 
@@ -549,7 +553,7 @@ run;
 proc sql; create table enr_drop_agg_eth2 as 
     select a.*
         ,b.total_sum
-        ,(a.total_enr/b.total_sum)*100 as ethnic_pct
+        ,(a.total_enr/b.total_sum) as ethnic_pct
     from enr_drop_agg_eth as a 
     left join dist_tot as b
     on a.district=b.district
@@ -560,7 +564,6 @@ proc sort
     data=enr_drop_agg_eth2; 
     by 
         district 
-        descending 
-        ethnic_pct
+        descending ethnic_pct
     ; 
 run;

@@ -104,14 +104,16 @@ droppouts10.
 
 proc format;
     value Race_Ethnicity_bins
+        0=" Not reported"
         1=" American Indian/Alaska Native"
         2=" Asian"
         3=" Pacific Islander"
         4=" Filipino"
-        5=" Hispanic/Latin"
+        5=" Hispanic/Latino"
         6=" African American/Not Hispanic"
         7=" White/ Not Hispanic"
         8=" Multiple/No Response"
+        9=" Two or More Races, Not Hispanic"
     ;
     value $Gender_bins
         'F'=" Female"
@@ -138,6 +140,10 @@ proc format;
         'D12'=" Dropout in grade 12"
         'DUS'=" Dropout in ungraded secondary classes in grades nine through twelve."
         'DTOT'=" Total Dropout for grades nine through twelve."
+    ;
+    value minority_val
+        1="Non-White"
+        0="White"
     ;
 run;
 
@@ -400,4 +406,164 @@ data enr_dropout_analytic_file;
     by
         CDS_Code
     ;
+run;
+
+*CL data manipulation steps;
+*Research Question 1;
+
+proc sql; create table enr_drop_names as 
+    select 
+        a.*
+        ,b.District
+    from 
+        enr_dropout_analytic_file as a
+    left join 
+        pubschls_raw as b
+    on a.cds_code=input(b.cdscode,30.)
+    ;
+quit;
+
+data enr_drop_names_eth;
+    set enr_drop_names;
+    if 
+        ethnic ne 7 
+    then 
+        minority = 1
+    ;
+    else if 
+        ethnic = 7 
+    then 
+        minority = 0
+    ;
+run;
+
+proc sql; create table enr_drop_agg as 
+    select
+        year
+        ,district
+        ,minority
+        ,sum(enr_total) as total_enr
+        ,sum(dtot) as total_drop
+    from 
+        enr_drop_names_eth
+    group by 
+        year
+        ,district
+        ,minority
+    ;
+quit; 
+
+data enr_drop_pct;
+    set enr_drop_agg;
+    drop_pct = total_drop/total_enr;
+run;
+
+proc sort 
+    data=enr_drop_pct out=enr_drop_pct_min00;
+    by 
+        descending drop_pct
+    ;
+    where minority=1
+        and year=9900;
+run;
+
+proc sort 
+    data=enr_drop_pct out=enr_drop_pct_min10;
+    by 
+        descending drop_pct
+    ;
+    where minority=1
+        and year=910;
+run;
+
+*Research Question 2;
+proc sql; create table enr_drop_tot as 
+    select 
+        year
+        ,minority
+        ,total_enr
+        ,sum(total_enr) as all 
+    from 
+        (
+        select
+            year
+            ,minority
+    	    ,sum(enr_total) as total_enr
+        from 
+            enr_drop_names_eth
+        group by 
+            year
+            ,minority
+        ) 
+    group by 
+        year
+    ;
+quit; 
+
+data enr_drop_tot_pct;
+    set enr_drop_tot;
+    enr_pct = total_enr/all;
+run;
+
+*Research Question 3;
+
+proc sql; create table enr_drop_agg_eth as 
+    select
+        year
+        ,district
+        ,ethnic
+        ,sum(enr_total) as total_enr
+        ,sum(dtot) as total_drop 
+    from 
+        (
+        select *
+        from enr_drop_names_eth
+        where District in (
+            'Inyo County Office of Education'
+            'Lynwood Unified'
+            'Nevada County Office of Education'
+            'Golden Plains Unified'
+            'Los Angeles County Office of Education')
+            and year=910
+        )
+    group by 
+        year
+        ,district
+        ,ethnic
+    ;
+quit; 
+
+proc means 
+    data=enr_drop_agg_eth 
+        noprint
+    ;
+    var 
+        total_enr
+    ;
+    by 
+        district
+    ;                                                    
+    output 
+        out=dist_tot 
+            (keep=district total_sum) 
+        sum=total_sum
+    ;         
+run;  
+
+proc sql; create table enr_drop_agg_eth2 as 
+    select a.*
+        ,b.total_sum
+        ,(a.total_enr/b.total_sum) as ethnic_pct
+    from enr_drop_agg_eth as a 
+    left join dist_tot as b
+    on a.district=b.district
+    ;
+quit;
+
+proc sort 
+    data=enr_drop_agg_eth2; 
+    by 
+        district 
+        descending ethnic_pct
+    ; 
 run;

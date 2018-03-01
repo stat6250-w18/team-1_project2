@@ -512,8 +512,8 @@ proc sql; create table enr_drop_agg_eth as
         year
         ,district
         ,ethnic
-	    ,sum(enr_total) as total_enr
-		,sum(dtot) as total_drop 
+        ,sum(enr_total) as total_enr
+        ,sum(dtot) as total_drop 
     from 
         (
         select *

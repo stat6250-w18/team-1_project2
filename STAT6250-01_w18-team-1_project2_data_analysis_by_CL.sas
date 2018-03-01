@@ -49,6 +49,10 @@ footnote3
 "Across these two points in time, it seems dropout rate within districts have generally increased."
 ;
 
+footnote4
+"Only districts with over 100 enrollments were examined."
+;
+
 *
 Note: This compares the total dropout percent by district by year. 
 
@@ -87,6 +91,7 @@ proc print
         district="School District"
         drop_pct="Drop Percentage"
     ;
+    where total_enr > 100;
 run;
 
 proc print
@@ -108,6 +113,7 @@ proc print
         district="School District"
         drop_pct="Drop Percentage"
     ;
+    where total_enr > 100;
 run;
 
 title;

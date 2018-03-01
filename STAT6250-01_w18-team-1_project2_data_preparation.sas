@@ -104,7 +104,7 @@ droppouts10.
 
 proc format;
     value Race_Ethnicity_bins
-        0 =" Not reported"
+        0=" Not reported"
         1=" American Indian/Alaska Native"
         2=" Asian"
         3=" Pacific Islander"
@@ -113,6 +113,7 @@ proc format;
         6=" African American/Not Hispanic"
         7=" White/ Not Hispanic"
         8=" Multiple/No Response"
+        9=" Two or More Races, Not Hispanic"
     ;
     value $Gender_bins
         'F'=" Female"

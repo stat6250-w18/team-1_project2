@@ -751,3 +751,129 @@ proc sort
     	year=910
     ;
 run;
+
+
+* Creation of tables and data sets, and PROC SORT steps required in 
+analysis file by CN;
+*Research Question 1 from CN;
+proc sql; create table enr_drop_dist_names as 
+    select 
+        a.*
+	    ,b.District
+    from 
+        enr_dropout_analytic_file as a
+	left join 
+        pubschls_raw as b
+	on a.cds_code=input(b.cdscode,30.)
+    ;
+quit;
+
+proc sql; create table enr_drop_dist_group as 
+    select
+        year
+        ,district
+	    ,sum(enr_total) as total_enr
+		,sum(dtot) as total_drop
+    from 
+        enr_drop_dist_names
+	group by 
+        year
+        ,district
+	;
+quit; 
+
+proc sort 
+    data=enr_drop_dist_group
+    out=enr_drop_dist_group_9900
+    ;
+    by 
+        descending total_enr
+    ;
+    where year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_dist_group
+    out=enr_drop_dist_group_0910
+    ;
+    by 
+        descending total_enr
+    ;
+    where 
+    	year=910
+    ;
+run;
+
+
+*Research Question 2 from CN;
+
+proc sql; create table enr_drop_by_year as 
+    select
+        year
+	    ,sum(enr_total) as total_enr
+		,sum(dtot) as total_drop
+    from 
+        enr_dropout_analytic_file
+	group by 
+        year
+	;
+quit; 
+
+data enr_drop_rate;
+	set enr_drop_by_year;
+	dropout_rate = total_drop/total_enr;
+run;
+
+proc sort
+	data=enr_drop_rate
+	out=drop_rate_by_year
+	;
+	by
+		descending dropout_rate
+	;
+run;
+
+
+*Research Question 3 from CN;
+proc sql; create table enr_drop_by_ethnic as 
+    select
+        year
+        ,ethnic
+	    	,sum(enr_total) as total_enr
+			,sum(dtot) as total_drop
+    from 
+        enr_dropout_analytic_file
+	group by 
+        year
+        ,ethnic
+	;
+quit;
+
+data enr_drop_rate_ethnic;
+	set enr_drop_by_ethnic;
+	drop_rate = total_drop/total_enr;
+run;
+
+proc sort 
+    data=enr_drop_rate_ethnic 
+    out=enr_drop_rate_ethnic_sorted_9900;
+    by 
+        descending drop_rate
+    ;
+    where
+    	year=9900
+    ;
+run;
+
+proc sort 
+    data=enr_drop_rate_ethnic 
+    out=enr_drop_rate_ethnic_sorted_0910
+    ;
+    by 
+        descending drop_rate
+    ;
+    where
+    	year=910
+    ;
+run;

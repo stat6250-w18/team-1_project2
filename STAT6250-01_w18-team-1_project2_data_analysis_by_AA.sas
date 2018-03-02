@@ -38,133 +38,96 @@ title2
 ;
 
 footnote1
-"In AY1999-2000, there were 7,010 enrollments for male students and 5950 enrollments for female students"
+"From AY1999-2000 to AY2009-2010, the total enrollments for both male and female students increases in absolute numbers."
 ;
 
 footnote2
-"In AY1999-2000, there were 48,557 enrollments for male students and 43,375 enrollments for female students"
+"From AY1999-2000 to AY2009-2010, the enrollment rate of male students decreases from 112.28% to 61%"
 ;
 
 footnote3
-"There has been a significant increase in the number of male and female enrollements in a decade."
+"From AY1999-2000 to AY2009-2010, the enrollment rate of female students decreases from 132.96% to 82.60%."
+;
+
+footnote4
+"The enrollment rate for both genders decrease within the decade, the decrease in enrollment rate for male students is higher than female students."
+;
+
+footnote5
+"Although total enrollment for both genders increase in absolute numbers within the decade, hence it requires further analysis for reasons for decrease in enrollment rate."
 ;
 
 *
 Note: This compares the column "Gender" from enr99
 to the column of the same name from enr09.
 
-Methodology: We print the data from enr99 and enr09 using where clause with 
-gender=M and gender=F.
+Methodology: Aggregate total enrollment and dropouts by year and gender. 
+Compute the total enrollment, enrollment rate, total droput,dropout rate out
+of total enrollment. Use PROC SORT to create a temporary sorted table in 
+ascending by total enrollment, enrollment rate and year. Finally, use 
+proc print to display the results by year and gender.
 
 Limitations: The enrollment data would require the population demographics in
 regards to sex to provide better insights.
 
-Followup Steps: We need to consider the population of males and females for 
-better assessment
+Followup Steps: We need to further analyze the reasons for decrease in 
+enrollment rate for both male and female gender within the decade.
 ;
 
-proc sort
-    data=enr_dropout_analytic_file
-        out=enr_analytic_file_sort_first_M
+proc print
+        data=enr_rate_tot_gender_sorted_9900
     ;
-    where
-        YEAR=9900 and GENDER = 'M'
+    id
+        year gender
     ;
-    by
-        descending ENR_TOTAL
+    var
+        total_enr_rate
     ;
-run;
-
-proc sort
-    data=enr_dropout_analytic_file
-        out=enr_analytic_file_sort_first_F
-    ;
-    where
-        YEAR=9900 and GENDER = 'F'
-    ;
-    by
-        descending ENR_TOTAL
-    ;
-run;
-
-proc sort
-    data=enr_dropout_analytic_file
-        out=enr_analytic_file_sort_sec_M
-    ;
-    where
-        YEAR=910 and GENDER = 'M'
-    ;
-    by
-        descending ENR_TOTAL
-    ;
-run;
-
-proc sort
-    data=enr_dropout_analytic_file
-        out=enr_analytic_file_sort_sec_F
-    ;
-    where
-        YEAR=910 and GENDER = 'F'
-    ;
-    by
-        descending ENR_TOTAL
-    ;
+    format
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 proc print
-    data=enr_analytic_file_sort_first_M(obs=5) label
-    ; 
+    data=enr_rate_tot_gender_sorted_0910
+    ;
+    id
+        year gender
+    ;
     var
-        YEAR CDS_CODE GENDER ENR_TOTAL
+        total_enr_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
-    ;
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 proc print
-    data=enr_analytic_file_sort_sec_M(obs=5) label
-    ; 
+        data=enr_rate_gender_sorted_9900
+    ;
+    id
+        year gender
+    ;
     var
-        YEAR CDS_CODE GENDER ENR_TOTAL 
+        enr_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
-    ;
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 proc print
-    data=enr_analytic_file_sort_first_F(obs=5) label
-    ; 
+    data=enr_rate_gender_sorted_0910
+    ;
+    id
+        year gender
+    ;
     var
-        YEAR CDS_CODE GENDER ENR_TOTAL 
+        enr_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
-    ;
-run;
-
-proc print
-    data=enr_analytic_file_sort_sec_F(obs=5) label
-    ; 
-    var
-        YEAR CDS_CODE GENDER ENR_TOTAL 
-    ;
-    format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
-    ;
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 title;
@@ -184,87 +147,92 @@ title2
 ;
 
 footnote1
-"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: Asian, American Indian/Alaska Native, Filipino."
+"From AY 1999-2000 to AY 2009-2010, the two ethnicites having least enrollments in absolute numbers are: Pacific Islander and American Indian/Alaska Native. Although there has been an increase in enrollment in absolute numbers for both these ethnicities over the decade."
 ;
 
 footnote2
-"As can be seen,in AY 1999-2000, the ethnicites having least enrollments are: Asian, American Indian/Alaska Native, Pacific Islander, Filipino."
+"As can be seen,in AY 1999-2000, the two ethnicites having least enrollments are: American Indian/Alaska Native, African American/Not Hispanic."
 ;
 
 footnote3
-"There has been no significant improvement in enrollment in a decade for Asian, American Indian/Alaska Native, Filipino ethnicities."
+"As can be seen,in AY 2009-2010, the two ethnicites having least enrollments are: African American/Not Hispanic, Hispanic/Latin."
+;
+
+footnote4
+"From AY 1999-2000 to AY 2009-2010, for African American/Not Hispanic ethnicity, the enrollment rate has dropped from 90.79 to 48.33"
 ;
 
 *
 Note: This compares the column "ETHNIC" from enr99
 to the column of the same name from enr09.
 
-Methodology: We print the data for the top 5 observations with the least 
-number of enrollments.
+Methodology: Aggregate total enrollment and dropouts by year and ethnic. 
+Compute the dropout rate out of total enrollment. Use PROC SORT to create a 
+temporary sorted table in ascending by total enrollment and enrollmentrate and 
+year. Finally, use proc print to display the results by year and ethnic.
 
 Limitations: The enrollment data would require the population demographics in
 regards to ethnicity to provide better insights.
- 
-Followup Steps: We need to consider the population of various ethnicities 
-better assessment
+
+Followup Steps: We need to further analyze why although the enrollment in 
+absolute numbers have increased for various ethnicities, what are the possible
+reasons for higher dropouts which results in low enrollment rates.
 ;
 
-proc sort
-    data=enr_dropout_analytic_file
-        out=enr_drp_analytic_file_sort_first
+proc print
+        data=enr_tot_rate_ethnic_sorted_9900
     ;
-    where
-        YEAR=9900
+    id
+        year ethnic
     ;
-    by
-        ENR_TOTAL
+    var
+        total_enr_rate
     ;
-run;
-
-proc sort
-    data=enr_dropout_analytic_file
-        out=enr_drp_analytic_file_sort_sec
-    ;
-    where
-        YEAR=910
-    ;
-    by
-        ENR_TOTAL
-    ;
+    format
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
+	;
 run;
 
 proc print
-    data=enr_drp_analytic_file_sort_first(obs=5) label
-    ; 
+        data=enr_tot_rate_ethnic_sorted_0910
+    ;
+    id
+        year ethnic
+    ;
     var
-        YEAR CDS_CODE ETHNIC ENR_TOTAL
-    ; 
-    where
-        ENR_TOTAL ne . AND ENR_TOTAL ne 0 
+        total_enr_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. ETHNIC Race_Ethnicity_bins.
-    ;
-    label
-        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
-    ;
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
+	;
 run;
 
 proc print
-    data=enr_drp_analytic_file_sort_sec(obs=5) label
-    ; 
-    var
-        YEAR CDS_CODE ETHNIC ENR_TOTAL 
+        data=enr_rate_ethnic_sorted_9900
     ;
-    where
-        ENR_TOTAL ne . AND ENR_TOTAL ne 0 
+    id
+        year ethnic
+    ;
+    var
+        enr_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. ETHNIC Race_Ethnicity_bins.
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
+	;
+run;
+
+proc print
+        data=enr_rate_ethnic_sorted_0910
     ;
-    label
-        ENR_TOTAL='Total school enrollment from Kindergarten through grade 12'
+    id
+        year ethnic
     ;
+    var
+        enr_rate
+    ;
+    format
+        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
+	;
 run;
 
 title;
@@ -284,137 +252,92 @@ title2
 ;
 
 footnote1
-"In AY1999-2000, there is not much difference between the dropouts between males and female students"
+"From AY1999-2000 to AY2009-2010, the gap between dropouts for male and female students increases significantly in absolute numbers."
 ;
 
 footnote2
-"In AY2009-2010, the gap of the number of dropouts between males and females increases significantly, with males having higher dropouts in absolute numbers"
+"From AY1999-2000 to AY2009-2010, the dropout rate of male students increases from 0.89% to 1.65%."
 ;
 
 footnote3
-"From AY1999-2000 to AY2009-2010, the dropouts for top 5 observations almost doubles both in case of males and females"
+"From AY1999-2000 to AY2009-2010, the dropout rate of female students increases from 0.75% to 1.21%."
 ;
 
 footnote4
-"We need to further analyze the reasons for increase in dropouts of male students"
+"The dropout rate for both genders increase within the decade, hence it requires further analysis for reasons for increase in dropouts, especially of male students"
 ;
 
 *
 Note: This compares the column "Gender" from droppouts00
 to the column of the same name from droppouts10.
 
-Methodology: We print the data from droppouts00 and droppouts10 using 
-where clause with gender=M and gender=F.
+Methodology: Aggregate total enrollment and dropouts by year and gender. 
+Compute the total enrollment, enrollment rate, total droput,dropout rate out
+of total enrollment. Use PROC SORT to create a temporary sorted table in 
+descending by total dropout, dropout rate and year. Finally, use 
+proc print to display the results by year and gender.
 
 Limitations: The dropout data would require the population demographics in
 regards to sex to provide better insights.
 
-Followup Steps: We need to consider the population of males and females for 
-better assessment
+Followup Steps: We need to further analyze the reasons for increase in dropout 
+rate for both male and female gender within the decade.
 ;
 
-proc sort
-    data=enr_dropout_analytic_file
-        out=drp_analytic_file_sort_first_M
+proc print
+        data=drop_rate_tot_gender_sorted_9900
     ;
-    where
-        YEAR=9900 and GENDER = 'M'
+    id
+        year gender
     ;
-    by
-        descending DTOT
+    var
+        total_drop_rate
     ;
-run;
-
-proc sort
-    data=enr_dropout_analytic_file
-        out=drp_analytic_file_sort_first_F
-    ;
-    where
-        YEAR=9900 and GENDER = 'F'
-    ;
-    by
-        descending DTOT
-    ;
-run;
-
-proc sort
-    data=enr_dropout_analytic_file
-        out=drp_analytic_file_sort_sec_M
-    ;
-    where
-        YEAR=910 and GENDER = 'M'
-    ;
-    by
-        descending DTOT
-    ;
-run;
-
-proc sort
-    data=enr_dropout_analytic_file
-        out=drp_analytic_file_sort_sec_F
-    ;
-    where
-        YEAR=910 and GENDER = 'F'
-    ;
-    by
-        descending DTOT
-    ;
+    format
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 proc print
-    data=drp_analytic_file_sort_first_M(obs=5) label
-    ; 
+    data=drop_rate_tot_gender_sorted_0910
+    ;
+    id
+        year gender
+    ;
     var
-        YEAR CDS_CODE GENDER DTOT 
+        total_drop_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
-    ;
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 proc print
-    data=drp_analytic_file_sort_sec_M(obs=5) label
-    ; 
+        data=drop_rate_gender_sorted_9900
+    ;
+    id
+        year gender
+    ;
     var
-        YEAR CDS_CODE GENDER DTOT 
+        drop_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
-    ;
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 proc print
-    data=drp_analytic_file_sort_first_F(obs=5) label
-    ; 
+    data=drop_rate_gender_sorted_0910
+    ;
+    id
+        year gender
+    ;
     var
-        YEAR CDS_CODE GENDER DTOT 
+        drop_rate
     ;
     format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
-    ;
-run;
-
-proc print
-    data=drp_analytic_file_sort_sec_F(obs=5) label
-    ; 
-    var
-        YEAR CDS_CODE GENDER DTOT 
-    ;
-    format
-        YEAR Year_Val. CDS_CODE BEST30. GENDER $Gender_bins.
-    ;
-    label
-        DTOT='Total dropouts for grades nine through twelve and ungraded secondary'
-    ;
+        YEAR Year_Val. GENDER $Gender_bins.
+	;
 run;
 
 title;

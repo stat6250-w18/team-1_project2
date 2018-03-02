@@ -30,7 +30,7 @@ X "cd ""%substr(%sysget(SAS_EXECFILEPATH),1,%eval(%length(%sysget(SAS_EXECFILEPA
 *******************************************************************************;
 
 title1
-'Research Question:	Which district of California K-12 Schools has the highest enrollment?'
+'Research Question: Which district of California K-12 Schools has the highest enrollment?'
 ;
 
 title2

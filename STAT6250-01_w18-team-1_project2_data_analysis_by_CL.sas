@@ -49,6 +49,10 @@ footnote3
 "Across these two points in time, it seems dropout rate within districts have generally increased."
 ;
 
+footnote4
+"Only districts with over 100 enrollments were examined."
+;
+
 *
 Note: This compares the total dropout percent by district by year. 
 
@@ -67,82 +71,10 @@ examination of select districts and compare the same districts with
 high dropout rates over different periods of time.
 ;
 
-proc format;
-    value ethnicity
-        0 = 'Not reported'
-        1 = 'American Indian or Alaska Native, Not Hispanic'
-        2 = 'Asian, Not Hispanic'
-        3 = 'Pacific Islander, Not Hispanic'
-        4 = 'Filipino, Not Hispanic'
-        5 = 'Hispanic or Latino'
-        6 = 'African American, not Hispanic'
-        7 = 'White, not Hispanic'
-        9 = 'Two or More Races, Not Hispanic'
-    ; 
-    value aca_year
-        910 = "2009 - 2010"
-        9900 = "1999 - 2000"
-    ;
-run;
-
-proc sql; create table enr_drop_names as 
-    select 
-        a.*
-        ,b.District
-    from 
-        enr_dropout_analytic_file as a
-    left join 
-        pubschls_raw as b
-    on a.cds_code=input(b.cdscode,30.)
-    ;
-quit;
-
-data enr_drop_names_eth;
-    set enr_drop_names;
-    if 
-        ethnic ne 7 
-    then 
-        minority = 1
-    ;
-    else if 
-        ethnic = 7 
-    then 
-        minority = 0
-    ;
-run;
-
-proc sql; create table enr_drop_agg as 
-    select
-        year
-        ,district
-        ,minority
-        ,sum(enr_total) as total_enr
-        ,sum(dtot) as total_drop
-    from 
-        enr_drop_names_eth
-    group by 
-        year
-        ,district
-        ,minority
-    ;
-quit; 
-
-data enr_drop_pct;
-    set enr_drop_agg;
-    drop_pct = total_drop/total_enr;
-run;
-
-proc sort 
-    data=enr_drop_pct out=enr_drop_pct_min00;
-    by 
-        descending drop_pct
-    ;
-    where minority=1
-        and year=9900;
-run;
-
 proc print
-    data=enr_drop_pct_min00 (obs=5);
+    data=enr_drop_pct_min00 (obs=5)
+        label
+    ;
     id
         District 
         year
@@ -150,20 +82,21 @@ proc print
     var
         drop_pct
     ;
-    format year aca_year.;
-run;
-
-proc sort 
-    data=enr_drop_pct out=enr_drop_pct_min10;
-    by 
-        descending drop_pct
+    format 
+        year year_val.
+        drop_pct percent10.
     ;
-    where minority=1
-        and year=910;
+    label
+        year="Academic Year"
+        district="School District"
+        drop_pct="Drop Percentage"
+    ;
+    where total_enr > 100;
 run;
 
 proc print
-    data=enr_drop_pct_min10 (obs=5);
+    data=enr_drop_pct_min10 (obs=5)
+        label;
     id
         District 
         year
@@ -171,7 +104,16 @@ proc print
     var
         drop_pct
     ;
-    format year aca_year.;
+    format 
+        year year_val.
+        drop_pct percent10.
+    ;
+    label
+        year="Academic Year"
+        district="School District"
+        drop_pct="Drop Percentage"
+    ;
+    where total_enr > 100;
 run;
 
 title;
@@ -219,37 +161,24 @@ enrollments among minorities. Can also include more years
 of data to look at the trand in enrollment among minorities.
 ;
 
-proc sql; create table enr_drop_tot as 
-    select 
-        year
-        ,minority
-        ,total_enr
-        ,sum(total_enr) as all 
-    from 
-        (
-        select
-            year
-            ,minority
-    	    ,sum(enr_total) as total_enr
-        from 
-            enr_drop_names_eth
-        group by 
-            year
-            ,minority
-        ) 
-    group by 
-        year
-    ;
-quit; 
-
-data enr_drop_tot_pct;
-    set enr_drop_tot;
-    enr_pct = total_enr/all;
-run;
-
 proc print 
-    data=enr_drop_tot_pct; 
-    format year aca_year.;
+    data=enr_drop_tot_pct
+        label
+    ; 
+    format 
+        year year_val.
+        minority minority_val.
+	total_enr comma9.
+	all comma9.
+	enr_pct percent10.
+    ;
+    label
+        year="Academic Year"
+        minority="Ethnic Group"
+        total_enr="Number Enrolled"
+        all="All Students"
+        enr_pct="Enrollment Percentage"
+    ;
 run;
 
 title;
@@ -288,75 +217,23 @@ Followup Steps: Look into aggregating at a higher level, such
 as county.
 ;
 
-proc sql; create table enr_drop_agg_eth as 
-    select
-        year
-        ,district
-        ,ethnic
-	    ,sum(enr_total) as total_enr
-		,sum(dtot) as total_drop 
-    from 
-        (
-        select *
-        from enr_drop_names_eth
-        where District in (
-            'Inyo County Office of Education'
-            'Lynwood Unified'
-            'Nevada County Office of Education'
-            'Golden Plains Unified'
-            'Los Angeles County Office of Education')
-            and year=910
-        )
-	group by 
-        year
-        ,district
-        ,ethnic
-	;
-quit; 
-
-proc means 
-    data=enr_drop_agg_eth 
-        noprint
+proc print 
+    data=enr_drop_agg_eth2 
+        label
+    ;
+    format 
+        ethnic Race_Ethnicity_bins.
+	ethnic_pct percent10.
     ;
     var 
-        total_enr
-    ;
-    by 
-        district
-    ;                                                    
-    output 
-        out=dist_tot 
-            (keep=district total_sum) 
-        sum=total_sum
-    ;         
-run;  
-
-proc sql; create table enr_drop_agg_eth2 as 
-    select a.*
-        ,b.total_sum
-        ,(a.total_enr/b.total_sum)*100 as ethnic_pct
-    from enr_drop_agg_eth as a 
-    left join dist_tot as b
-    on a.district=b.district
-    ;
-quit;
-
-proc sort 
-    data=enr_drop_agg_eth2; 
-    by 
-        district 
-        descending 
-        ethnic_pct
-    ; 
-run;
-
-proc print 
-    data=enr_drop_agg_eth2;
-	format ethnic ethnicity.;
-	var 
         district 
         ethnic 
         ethnic_pct
+    ;
+    label
+        district="School District"
+        ethnic="Ethnicity"
+        ethnic_pct="Percent"
     ;
 run;
 

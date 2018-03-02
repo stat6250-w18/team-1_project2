@@ -30,23 +30,23 @@ X "cd ""%substr(%sysget(SAS_EXECFILEPATH),1,%eval(%length(%sysget(SAS_EXECFILEPA
 *******************************************************************************;
 
 title1
-'Research Question:	Which district has the highest enrollment?'
+'Research Question:	Which district of California K-12 Schools has the highest enrollment?'
 ;
 
 title2
-'Rationale: This should help identify schools with high enrollment so proper resourcces could be provided.'
+'Rationale: This should help identify schools with high number of enrollment so proper resourcces could be provided.'
 ;
 
 footnote1
-"In ay 1999-2000, Los Angeles Unified got the highest number of Enrollment with 702,770 students in total."
+"In ay 1999-2000, the districts with the highest number of enrollment are Los Angeles and San Diego."
 ;
 
 footnote2
-"In ay 2009-2010, Los Angeles Unified also got the highest number of Enrollment with 673,635 students in total."
+"In ay 2009-2010, the districts with the highest number of enrollment are also Los Angeles and San Diego."
 ;
 
 footnote3
-"Based on the output, Los Angeles Unified has always been the district that got highest Enrollment."
+"Across these two points in time, it seems enrollment within Los Angeles district has decreased but enrollment within San Diego has increased slightly."
 ;
 
 *
@@ -66,45 +66,9 @@ illegal values, and better handle missing data, e.g., by using a previous year's
 data or a rolling average of previous years' data as a proxy.
 ;
 
-proc sql; create table enr_drop_dist_names as 
-    select 
-        a.*
-	    ,b.District
-    from 
-        enr_dropout_analytic_file as a
-	left join 
-        pubschls_raw as b
-	on a.cds_code=input(b.cdscode,30.)
-    ;
-quit;
-
-proc sql; create table enr_drop_dist_group as 
-    select
-        year
-        ,district
-	    ,sum(enr_total) as total_enr
-		,sum(dtot) as total_drop
-    from 
-        enr_drop_dist_names
-	group by 
-        year
-        ,district
-	;
-quit; 
-
-proc sort 
-    data=enr_drop_dist_group
-    out=enr_drop_dist_group_9900
-    ;
-    by 
-        descending total_enr
-    ;
-    where year=9900
-    ;
-run;
-
 proc print
     data=enr_drop_dist_group_9900(obs=2)
+		label;
     ;
     id
         District 
@@ -113,24 +77,20 @@ proc print
     var
         total_enr
     ;
-    format YEAR Year_Val.
+    format 
+		year year_val.
+		total_enr comma8.
     ;
-run;
-
-proc sort 
-    data=enr_drop_dist_group
-    out=enr_drop_dist_group_0910
-    ;
-    by 
-        descending total_enr
-    ;
-    where 
-    	year=910
-    ;
+	label
+		district="School District"
+		year="Academic Year"
+		total_enr="Total Enrollment"
+	;
 run;
 
 proc print
     data=enr_drop_dist_group_0910(obs=2)
+		label;
     ;
     id
         District 
@@ -139,8 +99,15 @@ proc print
     var
         total_enr
     ;
-    format YEAR Year_Val.
+    format 
+		year year_val.
+		total_enr comma8.
     ;
+	label
+		district="School District"
+		year="Academic Year"
+		total_enr="Total Enrollment"
+	;
 run;
 
 title;
@@ -171,6 +138,10 @@ footnote3
 "The dropout rate of ay 2009-2010 was almost two times higher than the one of ay 1999-2000."
 ;
 
+footnote4
+"Across these two points in time, it seems dropout rate has increased generally."
+;
+
 *
 Note: This compares the dropout rate by year.
 
@@ -188,37 +159,23 @@ illegal values, and better handle missing data, e.g., by using a previous year's
 data or a rolling average of previous years' data as a proxy.
 ;
 
-proc sql; create table enr_drop_by_year as 
-    select
-        year
-	    ,sum(enr_total) as total_enr
-		,sum(dtot) as total_drop
-    from 
-        enr_dropout_analytic_file
-	group by 
-        year
-	;
-quit; 
-
-data enr_drop_rate;
-	set enr_drop_by_year;
-	dropout_rate = total_drop/total_enr;
-run;
-
-proc sort
-	data=enr_drop_rate
-	out=drop_rate_by_year
-	;
-	by
-		descending dropout_rate
-	;
-run;
-
 proc print
 	data= drop_rate_by_year
+		label
 	;
-	format YEAR Year_Val.
+	format 
+		year year_val.
+		total_enr comma9.
+		total_drop comma8.
+		dropout_rate percent10.2
     ;
+	label
+		district="School District"
+		year="Academic Year"
+		total_enr="Total Enrollment"
+		total_drop="Total Dropout"
+		dropout_rate="Dropout Rate"
+	;
 run;
 
 title;
@@ -233,11 +190,11 @@ title1
 'Research Question: Which ethnicity has the highest dropout rate?'.
 ;
 title2
-"Rationale: This should help identify which ethnicity is more likely to drop out schools and thus necessary outreach should be providedr"
+"Rationale: This should help identify which ethnicity is more likely to drop out schools and thus necessary outreach should be provided."
 ;
 
 footnote1
-"In ay 1999-2000, American Indian/Alaska Native students had the highest dropout rate with 1.2 percent."
+"In ay 1999-2000, American Indian/Alaska Native students had the highest dropout rate with nearly 1.2 percent."
 ;
 
 footnote2
@@ -261,51 +218,9 @@ illegal values, and better handle missing data, e.g., by using a previous year's
 data or a rolling average of previous years' data as a proxy.
 ;
 
-proc format;
-    value Race_Ethnicity_bins
-        0=" Not reported"
-        1=" American Indian/Alaska Native"
-        2=" Asian"
-        3=" Pacific Islander"
-        4=" Filipino"
-        5=" Hispanic/Latin"
-        6=" African American/Not Hispanic"
-        7=" White/ Not Hispanic"
-        8=" Multiple/No Response"
-        9=" Two or More Races"
-        ;
-proc sql; create table enr_drop_by_ethnic as 
-    select
-        year
-        ,ethnic
-	    	,sum(enr_total) as total_enr
-			,sum(dtot) as total_drop
-    from 
-        enr_dropout_analytic_file
-	group by 
-        year
-        ,ethnic
-	;
-quit;
-
-data enr_drop_rate_ethnic;
-	set enr_drop_by_ethnic;
-	drop_rate = total_drop/total_enr;
-run;
-
-proc sort 
-    data=enr_drop_rate_ethnic 
-    out=enr_drop_rate_ethnic_sorted_9900;
-    by 
-        descending drop_rate
-    ;
-    where
-    	year=9900
-    ;
-run;
-
 proc print
-        data=enr_drop_rate_ethnic_sorted_9900
+	data=enr_drop_rate_ethnic_sorted_9900
+		label
     ;
     id
         year ethnic
@@ -314,20 +229,17 @@ proc print
         drop_rate
     ;
     format
-        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
+        year year_val. 
+		ethnic Race_Ethnicity_bins.
+		drop_rate percent10.2
+	;
+	label
+		year="Academic Year"
+		ethnic="Ethnicity"
+		drop_rate="Dropout Rate"
+	;
 run;
 
-proc sort 
-    data=enr_drop_rate_ethnic 
-    out=enr_drop_rate_ethnic_sorted_0910
-    ;
-    by 
-        descending drop_rate
-    ;
-    where
-    	year=910
-    ;
-run;
 proc print
     data=enr_drop_rate_ethnic_sorted_0910
     ;
@@ -338,7 +250,15 @@ proc print
         drop_rate
     ;
     format
-        YEAR Year_Val. ETHNIC Race_Ethnicity_bins.
+        year year_val. 
+		ethnic Race_Ethnicity_bins.
+		drop_rate percent10.2
+	;
+	label
+		year="Academic Year"
+		ethnic="Ethnicity"
+		drop_rate="Dropout Rate"
+	;
 run;
 
 title;

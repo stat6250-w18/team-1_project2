@@ -46,7 +46,7 @@ footnote2
 ;
 
 footnote3
-"Across these two points in time, it seems enrollment within Los Angeles district has decreased but enrollment within San Diego has increased slightly."
+"Across these two points in time, it seems enrollment within Los Angeles district has decreased but enrollment within San Diego has slightly increased."
 ;
 
 *

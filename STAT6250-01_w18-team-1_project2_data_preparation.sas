@@ -755,7 +755,7 @@ run;
 
 * Creation of tables and data sets, and PROC SORT steps required in 
 analysis file by CN;
-*Research Question 1 from CN;
+* Research Question 1 from CN;
 proc sql; create table enr_drop_dist_names as 
     select 
         a.*
@@ -806,7 +806,7 @@ proc sort
 run;
 
 
-*Research Question 2 from CN;
+* Research Question 2 from CN;
 
 proc sql; create table enr_drop_by_year as 
     select
@@ -835,7 +835,7 @@ proc sort
 run;
 
 
-*Research Question 3 from CN;
+* Research Question 3 from CN;
 proc sql; create table enr_drop_by_ethnic as 
     select
         year

@@ -575,8 +575,8 @@ proc sql; create table enr_drop_by_gender as
     select
         year
         ,gender
-	    	,sum(enr_total) as total_enr
-			,sum(dtot) as total_drop
+		,sum(enr_total) as total_enr
+		,sum(dtot) as total_drop
     from 
         enr_dropout_analytic_file
 	group by 

@@ -571,6 +571,8 @@ run;
 
 * Creation of tables and data sets, and PROC SORT steps required in 
 analysis file by AA;
+*Create a table that contains year, gender, total enrollment, total dropout
+group by year and gender;
 proc sql; create table enr_drop_by_gender as 
     select
         year
@@ -585,6 +587,8 @@ proc sql; create table enr_drop_by_gender as
 	;
 quit;
 
+*Creating a dataset from table enr_drop_by_gender and creating variables for
+toatl enrollment, total dropouts, toatl enrollment rate and total dropout rate;
 data enr_drop_rate_gender;
 	set enr_drop_by_gender;
 	total_enr_rate = total_enr;
@@ -593,6 +597,7 @@ data enr_drop_rate_gender;
 	drop_rate = total_drop/total_enr;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total enrollment for year 1999-2000;
 proc sort 
     data=enr_drop_rate_gender 
     out=enr_rate_tot_gender_sorted_9900;
@@ -604,6 +609,8 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total enrollment rate for year 
+1999-2000;
 proc sort 
     data=enr_drop_rate_gender 
     out=enr_rate_gender_sorted_9900;
@@ -615,6 +622,7 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total enrollment for year 2009-2010;
 proc sort 
     data=enr_drop_rate_gender 
     out=enr_rate_tot_gender_sorted_0910
@@ -627,6 +635,8 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total enrollment rate for year 
+2009-2010;
 proc sort 
     data=enr_drop_rate_gender 
     out=enr_rate_gender_sorted_0910
@@ -639,6 +649,8 @@ proc sort
     ;
 run;
 
+*Create a table that contains year, ethnicity, total enrollment, total dropout
+group by year and ethnicity;
 proc sql; create table enr_dropout_by_ethnic as 
     select
         year
@@ -653,12 +665,15 @@ proc sql; create table enr_dropout_by_ethnic as
 	;
 quit;
 
+*Creating a dataset from table enr_dropout_by_ethnic and creating variables for
+toatl enrollment, total dropouts, toatl enrollment rate and total dropout rate;
 data enr_rate_ethnic;
     set enr_dropout_by_ethnic;
 	total_enr_rate = total_enr;
 	enr_rate = total_enr/total_drop;
 run;
 
+*Sort the dataset enr_rate_ethnic by total enrollment for year 1999-2000;
 proc sort 
     data=enr_rate_ethnic 
     out=enr_tot_rate_ethnic_sorted_9900;
@@ -670,6 +685,7 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_rate_ethnic by total enrollment rate for year 1999-2000;
 proc sort 
     data=enr_rate_ethnic 
     out=enr_rate_ethnic_sorted_9900
@@ -682,6 +698,7 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_rate_ethnic by total enrollment for year 2009-2010;
 proc sort 
     data=enr_rate_ethnic 
     out=enr_tot_rate_ethnic_sorted_0910
@@ -694,6 +711,7 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_rate_ethnic by total enrollment rate for year 2009-2010;
 proc sort 
     data=enr_rate_ethnic 
     out=enr_rate_ethnic_sorted_0910
@@ -706,6 +724,7 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total dropouts for year 1999-2000;
 proc sort 
     data=enr_drop_rate_gender 
     out=drop_rate_tot_gender_sorted_9900;
@@ -717,6 +736,8 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total dropout rate for year 
+1999-2000;
 proc sort 
     data=enr_drop_rate_gender 
     out=drop_rate_gender_sorted_9900;
@@ -728,6 +749,7 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total dropouts for year 2009-2010;
 proc sort 
     data=enr_drop_rate_gender 
     out=drop_rate_tot_gender_sorted_0910
@@ -740,6 +762,8 @@ proc sort
     ;
 run;
 
+*Sort the dataset enr_drop_rate_gender by total dropout rate for year 
+2009-2010;
 proc sort 
     data=enr_drop_rate_gender 
     out=drop_rate_gender_sorted_0910

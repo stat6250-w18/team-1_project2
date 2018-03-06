@@ -408,9 +408,14 @@ data enr_dropout_analytic_file;
     ;
 run;
 
-*CL data manipulation steps;
-*Research Question 1;
+*******************************************************************************;
+****************************CL data manipulation steps*************************;
+*******************************************************************************;
 
+*****************************Research Question 1*******************************;
+
+*Create new data set that identifies distict names, location, etc. by 
+horizontally merging pubschls_raw to enr_dropout_analytic_file;
 proc sql; create table enr_drop_names as 
     select 
         a.*
@@ -423,6 +428,8 @@ proc sql; create table enr_drop_names as
     ;
 quit;
 
+*Create dummy variable to group ethnicity into larger bins as either 
+white or non-white;
 data enr_drop_names_eth;
     set enr_drop_names;
     if 
@@ -437,6 +444,8 @@ data enr_drop_names_eth;
     ;
 run;
 
+*Aggregate data set and group by year, district, and ethnicity grouping.
+Add total enrollment and total dropouts within these groupings;
 proc sql; create table enr_drop_agg as 
     select
         year
@@ -453,11 +462,15 @@ proc sql; create table enr_drop_agg as
     ;
 quit; 
 
+*Calculate proportion of dropouts to enrollees by dividing total 
+dropped by total enrolled;
 data enr_drop_pct;
     set enr_drop_agg;
     drop_pct = total_drop/total_enr;
 run;
 
+*Subset data to rows where minority=1 and year=9900. Sort data set 
+in descending order by dropout percentage;
 proc sort 
     data=enr_drop_pct out=enr_drop_pct_min00;
     by 
@@ -467,6 +480,8 @@ proc sort
         and year=9900;
 run;
 
+*Subset data to rows where minority=1 and year=910. Sort data set 
+in descending order by dropout percentage;
 proc sort 
     data=enr_drop_pct out=enr_drop_pct_min10;
     by 
@@ -476,7 +491,11 @@ proc sort
         and year=910;
 run;
 
-*Research Question 2;
+*****************************Research Question 2*******************************;
+
+*Aggregate data first by year and minority flag, then by year
+to create variables with total enrollment by year and minority
+flag, as well as total enrollment for the entire year;
 proc sql; create table enr_drop_tot as 
     select 
         year
@@ -500,13 +519,18 @@ proc sql; create table enr_drop_tot as
     ;
 quit; 
 
+*Calculate enrollment percentage by dividing enrollment total
+for a year and minority class by enrollments in the year;
 data enr_drop_tot_pct;
     set enr_drop_tot;
     enr_pct = total_enr/all;
 run;
 
-*Research Question 3;
+*****************************Research Question 3*******************************;
 
+*Subset data to select districts and year=910. Aggregate data by 
+year, district, and ethnicity to get total enrollments and total 
+dropouts for each combination; 
 proc sql; create table enr_drop_agg_eth as 
     select
         year
@@ -533,6 +557,8 @@ proc sql; create table enr_drop_agg_eth as
     ;
 quit; 
 
+*Use PROC MEANS to calculate sum of total enrollments for 
+each district;
 proc means 
     data=enr_drop_agg_eth 
         noprint
@@ -550,6 +576,9 @@ proc means
     ;         
 run;  
 
+*Join in district totals from PROC MEANS step to calculate 
+ethnicity distribution for each district with highest dropout
+rate;
 proc sql; create table enr_drop_agg_eth2 as 
     select a.*
         ,b.total_sum
@@ -560,6 +589,9 @@ proc sql; create table enr_drop_agg_eth2 as
     ;
 quit;
 
+*Order data set by highest ethnicity percentage share within each 
+district in preparation for PROC PRINT to display ethnicity 
+distribution within each district;
 proc sort 
     data=enr_drop_agg_eth2; 
     by 

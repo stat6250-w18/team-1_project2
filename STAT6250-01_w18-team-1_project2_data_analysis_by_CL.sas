@@ -7,7 +7,7 @@
 This file uses the following analytic dataset to address several research
 questions regarding dropout and enrollment trends at CA public K-12 schools
 
-Dataset Name: cde_2014_analytic_file created in external file
+Dataset Name: enr_dropout_analytic_file created in external file
 STAT6250-02_s17-team-1_project2_data_preparation.sas, which is assumed to be
 in the same directory as this file
 
@@ -20,8 +20,10 @@ See included file for dataset properties
 X "cd ""%substr(%sysget(SAS_EXECFILEPATH),1,%eval(%length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILENAME))))""";
 
 
-* load external file that generates analytic datasets cde_2014_analytic_file,
-cde_2014_analytic_file_sort_frpm, and cde_2014_analytic_file_sort_sat;
+* load external file that generates analytic datasets enr_analytic_file,
+dropout_analytic_file, enr_dropout_analytic_file, enr_drop_names_eth,
+enr_drop_names, enr_drop_agg, enr_drop_pct_min00, enr_drop_pct_min10,
+enr_drop_tot_pct, enr_drop_agg_eth, and enr_drop_agg_eth2;
 %include '.\STAT6250-01_w18-team-1_project2_data_preparation.sas';
 
 
@@ -71,6 +73,9 @@ examination of select districts and compare the same districts with
 high dropout rates over different periods of time.
 ;
 
+*print first 5 rows of districts in 1999-2000 with over 100 
+enrollments and have the highest dropout rate. Add format and labels 
+for better readability;
 proc print
     data=enr_drop_pct_min00 (obs=5)
         label
@@ -94,6 +99,9 @@ proc print
     where total_enr > 100;
 run;
 
+*print first 5 rows of districts in 2009-2010 with over 100 
+enrollments and have the highest dropout rate. Add format and labels 
+for better readability;
 proc print
     data=enr_drop_pct_min10 (obs=5)
         label;
@@ -161,6 +169,9 @@ enrollments among minorities. Can also include more years
 of data to look at the trand in enrollment among minorities.
 ;
 
+*Display aggregated data set that is grouped by ethnic group 
+and year to show difference in percentages across these two 
+points in time. Add formatting and labels for enhance readability;
 proc print 
     data=enr_drop_tot_pct
         label
@@ -217,6 +228,9 @@ Followup Steps: Look into aggregating at a higher level, such
 as county.
 ;
 
+*Display aggregated data set that is grouped by district and 
+year to show ethnicity distribution by region. Add formatting
+and labels for enhance readability;
 proc print 
     data=enr_drop_agg_eth2 
         label

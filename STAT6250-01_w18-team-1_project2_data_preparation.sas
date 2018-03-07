@@ -809,9 +809,10 @@ proc sort
 run;
 
 
-* Creation of tables and data sets, and PROC SORT steps required in 
-analysis file by CN;
-* Research Question 1 from CN;
+****************************CN data manipulation steps************************;
+
+* Use proc SQL to create new data set that identifies distict names by 
+horizontally merging pubschls_raw to enr_dropout_analytic_file;
 proc sql; create table enr_drop_dist_names as 
     select 
         a.*
@@ -824,6 +825,8 @@ proc sql; create table enr_drop_dist_names as
     ;
 quit;
 
+*Use proc SQL to create a table grouping total enrollment and total dropouts 
+by year, and district;
 proc sql; create table enr_drop_dist_group as 
     select
         year
@@ -838,6 +841,8 @@ proc sql; create table enr_drop_dist_group as
 	;
 quit; 
 
+* Use proc sort to create a temporary sorted table in descending by total 
+enrollment in ay 1999-2000;
 proc sort 
     data=enr_drop_dist_group
     out=enr_drop_dist_group_9900
@@ -849,6 +854,8 @@ proc sort
     ;
 run;
 
+* Use proc sort to create a temporary sorted table in descending by total 
+enrollment in ay 2009-2010;
 proc sort 
     data=enr_drop_dist_group
     out=enr_drop_dist_group_0910
@@ -861,7 +868,8 @@ proc sort
     ;
 run;
 
-* Research Question 2 from CN;
+* Use proc SQL to create a table grouping total enrollment and total dropouts 
+by year;
 proc sql; create table enr_drop_by_year as 
     select
         year
@@ -874,11 +882,15 @@ proc sql; create table enr_drop_by_year as
 	;
 quit; 
 
+* Calculate dropout rate by dividing total dropped by total enrolled for each
+academic year;
 data enr_drop_rate;
 	set enr_drop_by_year;
 	dropout_rate = total_drop/total_enr;
 run;
 
+* Use proc sort to create a temporary sorted table in descending by
+dropout_rate;
 proc sort
 	data=enr_drop_rate
 	out=drop_rate_by_year
@@ -888,7 +900,8 @@ proc sort
 	;
 run;
 
-* Research Question 3 from CN;
+* Use proc SQL to create a table grouping total enrollment and total dropouts 
+by year, and ethnic;
 proc sql; create table enr_drop_by_ethnic as 
     select
         year
@@ -903,11 +916,15 @@ proc sql; create table enr_drop_by_ethnic as
 	;
 quit;
 
+* Calculate dropout rate by dividing total dropped by total enrolled for each
+ethnicity;
 data enr_drop_rate_ethnic;
 	set enr_drop_by_ethnic;
 	drop_rate = total_drop/total_enr;
 run;
 
+* Use proc sort to create a temporary sorted table in descending by
+dropout_rate for each ethnicity in ay 1999-2000;
 proc sort 
     data=enr_drop_rate_ethnic 
     out=enr_drop_rate_ethnic_sorted_9900;
@@ -919,6 +936,8 @@ proc sort
     ;
 run;
 
+* Use proc sort to create a temporary sorted table in descending by
+dropout_rate for each ethnicity in ay 2009-2010;
 proc sort 
     data=enr_drop_rate_ethnic 
     out=enr_drop_rate_ethnic_sorted_0910

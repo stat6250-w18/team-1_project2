@@ -170,7 +170,6 @@ proc print
 		dropout_rate percent10.2
     ;
 	label
-		district="School District"
 		year="Academic Year"
 		total_enr="Total Enrollment"
 		total_drop="Total Dropout"
@@ -187,7 +186,7 @@ footnote;
 *******************************************************************************;
 
 title1
-'Research Question: Which ethnicity has the highest dropout rate?'.
+"Research Question: Which ethnicity has the highest dropout rate?"
 ;
 title2
 "Rationale: This should help identify which ethnicity is more likely to drop out schools and thus necessary outreach should be provided."

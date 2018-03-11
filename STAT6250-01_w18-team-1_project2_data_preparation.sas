@@ -906,8 +906,8 @@ proc sql; create table enr_drop_by_ethnic as
     select
         year
         ,ethnic
-	    	,sum(enr_total) as total_enr
-			,sum(dtot) as total_drop
+	    ,sum(enr_total) as total_enr
+		,sum(dtot) as total_drop
     from 
         enr_dropout_analytic_file
 	group by 
